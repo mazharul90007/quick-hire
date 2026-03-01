@@ -45,6 +45,7 @@ export const metadata: Metadata = {
 };
 
 import Providers from "@/components/shared/Providers";
+import { Toaster } from "sonner";
 
 export default function RootLayout({
   children,
@@ -56,7 +57,10 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${epilogue.variable} ${clashDisplay.variable} antialiased`}
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+          <Toaster position="top-right" richColors />
+        </Providers>
       </body>
     </html>
   );

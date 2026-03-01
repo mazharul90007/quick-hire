@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { categoryApi } from "@/lib/api-client";
 
 export const useGetAllCategories = () => {
@@ -8,5 +8,11 @@ export const useGetAllCategories = () => {
             const response = await categoryApi.getAllCategories();
             return response.data;
         },
+    });
+};
+
+export const useCreateCategory = () => {
+    return useMutation({
+        mutationFn: (title: string) => categoryApi.createCategory(title),
     });
 };

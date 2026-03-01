@@ -2,10 +2,6 @@ import { Job } from "@/types";
 import Image from "next/image";
 import { MapPin } from "lucide-react";
 
-/**
- * Standard JobCard used for Featured/Latest jobs on the Home page.
- * Maintains the "previous" design the user liked but with overflow protection.
- */
 const JobCard = ({ job }: { job: Job }) => {
   const logoSrc = job.companyLogo || "/assets/images/no-image.svg";
 
@@ -30,7 +26,7 @@ const JobCard = ({ job }: { job: Job }) => {
           {job.title}
         </h3>
         <p className="text-zinc-500 text-sm flex items-center gap-1 font-medium">
-          <span className="truncate max-w-[120px]">{job.companyName}</span>
+          <span className="truncate max-w-30">{job.companyName}</span>
           <span className="text-zinc-300">•</span>{" "}
           <span className="flex items-center gap-1 shrink-0">
             <MapPin size={14} className="text-[#4640DE]" />

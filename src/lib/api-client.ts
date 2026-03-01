@@ -23,6 +23,12 @@ export const categoryApi = {
     const response = await api.get<ApiResponse<Category[]>>("/categories");
     return response.data;
   },
+  createCategory: async (title: string) => {
+    const response = await api.post<ApiResponse<Category>>("/categories", {
+      title,
+    });
+    return response.data;
+  },
 };
 
 //==============Job Api====================
@@ -32,6 +38,10 @@ export const jobApi = {
     const response = await api.get<ApiResponse<PaginatedData<Job>>>("/jobs", {
       params,
     });
+    return response.data;
+  },
+  createJob: async (payload: any) => {
+    const response = await api.post<ApiResponse<Job>>("/jobs/create-job", payload);
     return response.data;
   },
 };

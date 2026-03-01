@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Menu, LogOut } from "lucide-react";
+import { Menu, LogOut, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import MobileMenu from "./MobileMenu";
@@ -43,9 +43,9 @@ const Navbar = () => {
     { name: "Browse Companies", href: "/companies" },
   ];
 
-  if (session) {
-    navLinks.push({ name: "Dashboard", href: "/dashboard" });
-  }
+  // if (session) {
+  //   navLinks.push({ name: "Dashboard", href: "/dashboard" });
+  // }
 
   return (
     <nav
@@ -111,6 +111,18 @@ const Navbar = () => {
                     {session.user.email}
                   </span>
                 </div>
+                {(session.user as any).role === "ADMIN" && (
+                  <Link href="/dashboard">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-xs font-semibold text-[#4640DE] border-indigo-100 hover:bg-indigo-50 font-epilogue h-9 rounded-none mr-2 hidden md:flex"
+                    >
+                      <LayoutDashboard size={14} className="mr-2" />
+                      Dashboard
+                    </Button>
+                  </Link>
+                )}
                 <Button
                   variant="ghost"
                   size="icon"

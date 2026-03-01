@@ -19,7 +19,12 @@ export interface Job {
   description: string | null;
   benefits: string[];
   jobType: "REMOTE" | "IN_PERSON" | "HYBRID";
-  employmentType: "FULL_TIME" | "PART_TIME" | "CONTRACT" | "INTERNSHIP" | "TEMPORARY";
+  employmentType:
+    | "FULL_TIME"
+    | "PART_TIME"
+    | "CONTRACT"
+    | "INTERNSHIP"
+    | "TEMPORARY";
   featured: boolean;
   tags: string[];
   deadline: string | null;
@@ -61,4 +66,14 @@ export interface JobFilters {
   sortBy?: string;
   sortOrder?: "asc" | "desc";
   [key: string]: string | number | boolean | undefined;
+}
+
+export interface User {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  email: string;
+  emailVerified: boolean;
+  name: string;
+  image?: string | null | undefined;
 }
