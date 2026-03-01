@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { jobApi } from "@/lib/api-client";
+import { JobFilters } from "@/types";
 
 export const useGetFeaturedJobs = () => {
   return useQuery({
@@ -21,6 +22,16 @@ export const useGetLatestJobs = () => {
         sortOrder: "desc",
       });
       return response.data.data;
+    },
+  });
+};
+
+export const useGetAllJobs = (filters: JobFilters = {}) => {
+  return useQuery({
+    queryKey: ["jobs", filters],
+    queryFn: async () => {
+      const response = await jobApi.getAllJobs(filters);
+      return response.data;
     },
   });
 };

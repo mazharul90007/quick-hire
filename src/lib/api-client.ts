@@ -27,7 +27,8 @@ export const categoryApi = {
 
 //==============Job Api====================
 export const jobApi = {
-  getAllJobs: async (params?: Record<string, string | number | boolean>) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getAllJobs: async (params?: Record<string, any>) => {
     const response = await api.get<ApiResponse<PaginatedData<Job>>>("/jobs", {
       params,
     });
