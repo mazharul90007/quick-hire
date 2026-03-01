@@ -1,3 +1,4 @@
+import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
 
 export default function RootLayout({
@@ -8,8 +9,8 @@ export default function RootLayout({
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <main className="bg-white dark:bg-zinc-950">{children}</main>
-      {/* Footer can go here later */}
+      <main className="flex-grow bg-white dark:bg-zinc-950">{children}</main>
+      <Footer />
     </div>
   );
 }

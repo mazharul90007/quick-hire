@@ -13,7 +13,7 @@ const HeroSection = () => {
               <div>
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold font-clash text-[#2D2D2D] leading-[1.1]">
                   Discover <br /> more than <br />
-                  <span className="relative inline-block text-[#4640DE]">
+                  <span className="relative inline-block text-[#26A4FF]">
                     5000+ Jobs
                   </span>
                 </h1>
@@ -90,7 +90,7 @@ const HeroSection = () => {
         </div>
       </div>
       {/* Pattern Background */}
-      <div className="absolute inset-y-0 right-0 w-[860px] pointer-events-none">
+      <div className="absolute inset-y-0 right-0 w-215 pointer-events-none">
         <Image
           src="/assets/images/Pattern.svg"
           alt="Background Pattern"
