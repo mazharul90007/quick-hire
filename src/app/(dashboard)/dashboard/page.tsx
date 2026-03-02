@@ -104,10 +104,10 @@ export default function AdminPage() {
         ].map((stat, i) => (
           <div
             key={i}
-            className="bg-white p-8 border border-zinc-100 shadow-sm transition-all hover:shadow-md group"
+            className="bg-white p-8 border border-zinc-100 shadow-sm transition-all hover:shadow-md group rounded-lg"
           >
             <div className="flex items-start justify-between mb-4">
-              <div className={`p-3 rounded-none ${stat.color}`}>
+              <div className={`p-3 rounded ${stat.color}`}>
                 <stat.icon size={24} />
               </div>
               <Link
@@ -131,7 +131,7 @@ export default function AdminPage() {
 
       {/* Recent Activity / Content Sections */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 bg-white border border-zinc-100 p-8 shadow-sm">
+        <div className="lg:col-span-2 bg-white border border-zinc-100 p-8 shadow-sm rounded-lg">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-xl font-bold font-clash text-[#2D2D2D]">
               Recent Job Postings
@@ -187,7 +187,7 @@ export default function AdminPage() {
           </div>
         </div>
 
-        <div className="bg-white border border-zinc-100 p-8 shadow-sm">
+        <div className="bg-white border border-zinc-100 p-8 shadow-sm rounded-lg">
           <h2 className="text-xl font-bold font-clash text-[#2D2D2D] mb-8">
             Quick Actions
           </h2>

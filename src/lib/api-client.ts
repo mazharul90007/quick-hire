@@ -44,5 +44,15 @@ export const jobApi = {
     const response = await api.post<ApiResponse<Job>>("/jobs/create-job", payload);
     return response.data;
   },
+  getSingleJob: async (id: string) => {
+    const response = await api.get<ApiResponse<Job>>(`/jobs/${id}`);
+    return response.data;
+  },
 };
 //==============Application Api==================
+export const applicationApi = {
+  createApplication: async (payload: any) => {
+    const response = await api.post<ApiResponse<any>>("/applications", payload);
+    return response.data;
+  },
+};

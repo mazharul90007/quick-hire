@@ -1,11 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Menu, LogOut, LayoutDashboard } from "lucide-react";
+import { Menu, LogOut, LayoutDashboard, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import MobileMenu from "./MobileMenu";
 import { authClient } from "@/lib/auth-client";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -51,7 +59,6 @@ const Navbar = () => {
     <nav
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out bg-transparent py-4 sm:py-3",
-        // Scrolled or Mobile menu open state: White background with shadow/blur
         isScrolled || isMobileMenuOpen ? " backdrop-blur-md shadow-md" : "",
       )}
     >
@@ -103,31 +110,51 @@ const Navbar = () => {
               <div className="h-10 w-24 bg-zinc-100 animate-pulse rounded-xl" />
             ) : session ? (
               <div className="flex items-center gap-3">
-                <div className="hidden md:flex flex-col items-end mr-1">
-                  <span className="text-xs font-bold text-zinc-900 font-display">
-                    {session.user.name}
-                  </span>
-                  <span className="text-[10px] text-zinc-500 font-medium font-display">
-                    {session.user.email}
-                  </span>
-                </div>
-                {(session.user as any).role === "ADMIN" && (
-                  <Link href="/dashboard">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="text-xs font-semibold text-[#4640DE] border-indigo-100 hover:bg-indigo-50 font-epilogue h-9 rounded-none mr-2 hidden md:flex"
+                {/* Desktop User Dropdown */}
+                <div className="hidden md:block">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="rounded-full hover:bg-green-50 text-zinc-600 transition-colors h-10 w-10 cursor-pointer hover:text-green-600 border shadow"
+                      >
+                        <User size={20} />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      align="end"
+                      className="w-56 mt-2 p-2 rounded-xl shadow-xl border-zinc-100"
                     >
-                      <LayoutDashboard size={14} className="mr-2" />
-                      Dashboard
-                    </Button>
-                  </Link>
-                )}
+                      <DropdownMenuLabel className="font-normal">
+                        <div className="flex flex-col space-y-1">
+                          <p className="text-sm font-bold leading-none text-zinc-900 font-display">
+                            {session.user.name}
+                          </p>
+                          <p className="text-xs leading-none text-zinc-500 font-display">
+                            {session.user.email}
+                          </p>
+                        </div>
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator className="my-2 bg-zinc-100" />
+                      {(session.user as any).role === "ADMIN" && (
+                        <Link href="/dashboard">
+                          <DropdownMenuItem className="cursor-pointer rounded-lg focus:bg-indigo-50 focus:text-indigo-600 font-display py-2.5">
+                            <LayoutDashboard size={16} className="mr-2" />
+                            <span>Dashboard</span>
+                          </DropdownMenuItem>
+                        </Link>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={handleLogout}
-                  className="rounded-xl hover:bg-red-50 text-zinc-500 hover:text-red-600 transition-colors cursor-pointer"
+                  className="rounded-full hover:bg-red-50 text-zinc-500 hover:text-red-600 transition-colors h-10 w-10 cursor-pointer border"
+                  title="Logout"
                 >
                   <LogOut size={20} />
                 </Button>

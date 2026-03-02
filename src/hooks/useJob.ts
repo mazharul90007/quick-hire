@@ -37,6 +37,15 @@ export const useGetAllJobs = (filters: JobFilters = {}) => {
 };
 export const useCreateJob = () => {
   return useMutation({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mutationFn: (payload: any) => jobApi.createJob(payload),
+  });
+};
+
+export const useGetSingleJob = (id: string) => {
+  return useQuery({
+    queryKey: ["job", id],
+    queryFn: () => jobApi.getSingleJob(id),
+    enabled: !!id,
   });
 };
