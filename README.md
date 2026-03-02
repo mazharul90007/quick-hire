@@ -1,36 +1,114 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<p align="center">
+  <a href="https://quick-hire-client-chi.vercel.app" target="blank"><img src="https://res.cloudinary.com/dp6urj3gj/image/upload/v1772487956/quick-hire-logo_kfga0x.png" width="240" alt="QuickHire Logo" /></a>
+</p>
 
-## Getting Started
+  <p align="center">A professional and scalable job portal application built with modern technologies.</p>
 
-First, run the development server:
+# QUICK HIRE CLIENT
+
+**QUICK HIRE CLIENT** is a modern, responsive job portal frontend designed for a seamless recruitment experience. It allows applicants to discover opportunities, manage their profiles, and track applications, while providing administrators with a powerful dashboard for managing job listings and platform operations.
+
+🌐 **Frontend Live URL:** [https://quick-hire-client-chi.vercel.app](https://quick-hire-client-chi.vercel.app)  
+🌐 **Backend Live URL:** [https://quick-hire-server.onrender.com](https://quick-hire-server.onrender.com)  
+🌐 **Backend Github URL:** [https://github.com/mazharul90007/quick-hire-server](https://github.com/mazharul90007/quick-hire-server)
+
+---
+
+## ✨ Features
+
+### 👤 Applicant Experience
+
+- **Dynamic Job Board**: Browse and search through various job listings with advanced filters (title, district, type).
+- **Featured Jobs**: Discover highlighted career opportunities right on the homepage.
+- **Easy Application**: Submit applications for jobs with just a few clicks.
+- **Email Verification**: Secure account activation and transactional notifications via Nodemailer.
+- **Responsive Design**: Fully optimized for mobile, tablet, and desktop views with a premium look.
+
+### 🛠️ Admin Dashboard
+
+- **Job Management**: Create, update, and manage job postings with a specialized UI.
+- **Category Control**: Organize job listings into logical categories for better searchability.
+- **Application Tracking**: Monitor all incoming job applications in real-time.
+- **User Insights**: Overview of platform activity including total jobs and applications.
+
+---
+
+## 🛠️ Technology Stack
+
+- **Framework**: [Next.js](https://nextjs.org/) (v16.1.6)
+- **State Management**: [Zustand](https://github.com/pmndrs/zustand)
+- **Data Fetching**: [TanStack Query](https://tanstack.com/query)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **UI Components**: Radix UI & Shadcn/UI
+- **Authentication**: [Better-Auth](https://www.better-auth.com/)
+- **API Client**: Axios with custom instance configuration
+- **Icons**: Lucide React & React Icons
+- **Form Handling**: React Hook Form with Zod validation
+
+---
+
+## 📋 Prerequisites
+
+- **Node.js** (v20 or higher)
+- **pnpm** or **npm**
+- **Backend API Access** (Local or Remote)
+
+---
+
+## 🔧 Setup Instructions
+
+### 1. Clone the Repository
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/mazharul90007/quick-hire.git
+cd quick-hire/quick-hire-client
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Install Dependencies
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm install
+# or
+npm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 3. Environment Setup
 
-## Learn More
+Create a `.env.local` file in the root of the client directory:
 
-To learn more about Next.js, take a look at the following resources:
+```env
+NEXT_PUBLIC_API_URL="https://quick-hire-server.onrender.com/api/v1"
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 4. Running Locally
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+pnpm dev
+# or
+npm run dev
+```
 
-## Deploy on Vercel
+Open [http://localhost:3000](http://localhost:3000) to see your app.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📜 Project Structure
+
+- `src/app`: Next.js App Router and page layouts.
+- `src/components`: Reusable UI components (Shared, Dashboard, Auth).
+- `src/hooks`: Custom React hooks for API interaction and UI state.
+- `src/lib`: Utility functions, authentication client, and Axios instance.
+- `src/store`: Zustand store for global state management.
+- `src/assets`: Project images, logos, and static resources.
+
+---
+
+## 👤 Author
+
+**Mazharul Islam Sourabh**
+
+---
+
+## 📝 License
+
+ISC
