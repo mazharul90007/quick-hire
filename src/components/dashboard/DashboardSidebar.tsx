@@ -11,6 +11,7 @@ import {
   Menu,
   Home,
   LogOut,
+  X
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -38,13 +39,14 @@ const DashboardSidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
 
   return (
     <>
-      {/* Mobile Toggle */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed bottom-6 right-6 z-60 bg-[#4640DE] text-white p-4 shadow-xl shadow-[#4640DE]/40"
-      >
-        {isOpen ? <ChevronLeft size={24} /> : <Menu size={24} />}
-      </button>
+      {/* Backdrop for Mobile */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
 
       {/* Sidebar Container */}
       <aside
@@ -54,20 +56,31 @@ const DashboardSidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
         )}
       >
         <div className="p-8 flex flex-col h-full">
-          {/* Brand */}
-          <div className="flex items-center gap-3 mb-12">
-            <div className=" flex items-center justify-center p-2">
-              <Image
-                src="/assets/images/brand-logo.svg"
-                alt="QuickHire"
-                width={32}
-                height={32}
-                className="object-contain"
-              />
+          {/* Brand & Close Button */}
+          <div className="flex items-center justify-between mb-12">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center p-2">
+                <Image
+                  src="/assets/images/brand-logo.svg"
+                  alt="QuickHire"
+                  width={32}
+                  height={32}
+                  className="object-contain"
+                />
+              </div>
+              <span className="text-2xl font-bold font-clash tracking-tight">
+                QuickHire
+              </span>
             </div>
-            <span className="text-2xl font-bold font-clash tracking-tight">
-              QuickHire
-            </span>
+
+            {/* Close Button (Mobile Only) */}
+            <button
+              onClick={() => setIsOpen(false)}
+              className="lg:hidden p-2 text-zinc-400 hover:text-white transition-colors"
+              aria-label="Close Sidebar"
+            >
+              <X size={24} />
+            </button>
           </div>
 
           {/* Navigation */}
@@ -78,6 +91,9 @@ const DashboardSidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
                 <Link
                   key={item.name}
                   href={item.href}
+                  onClick={() => {
+                    if (window.innerWidth < 1024) setIsOpen(false);
+                  }}
                   className={cn(
                     "flex items-center gap-4 px-4 py-4 font-epilogue font-bold text-sm transition-all group",
                     isActive

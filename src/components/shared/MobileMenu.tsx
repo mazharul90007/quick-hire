@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { X, LogOut, User } from "lucide-react";
+import { X, LogOut, User, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -29,7 +29,7 @@ const MobileMenu = ({
             {/* Backdrop */}
             <div
                 className={cn(
-                    "fixed inset-0 bg-black/60 z-[60] transition-opacity duration-300 lg:hidden",
+                    "fixed inset-0 bg-zinc-900/60 backdrop-blur-md z-[60] transition-opacity duration-300 lg:hidden",
                     isOpen
                         ? "opacity-100 pointer-events-auto"
                         : "opacity-0 pointer-events-none"
@@ -92,7 +92,7 @@ const MobileMenu = ({
                     {/* Dynamic auth section for mobile */}
                     {session ? (
                         <div className="space-y-3">
-                            <div className="p-4 bg-indigo-50 rounded-2xl border border-indigo-100">
+                            <div className="p-4 bg-indigo-50 rounded-2xl border border-indigo-100 mb-2">
                                 <p className="text-sm font-bold text-zinc-900 font-display">
                                     {session.user.name}
                                 </p>
@@ -100,6 +100,23 @@ const MobileMenu = ({
                                     {session.user.email}
                                 </p>
                             </div>
+
+                            {session.user.role === "ADMIN" && (
+                                <Link
+                                    href="/dashboard"
+                                    onClick={onClose}
+                                    className={cn(
+                                        "flex items-center gap-3 p-3 rounded-xl font-medium transition-all font-display mb-2",
+                                        pathname === "/dashboard"
+                                            ? "bg-indigo-100 text-indigo-700"
+                                            : "text-zinc-600 hover:bg-zinc-50 hover:text-indigo-600"
+                                    )}
+                                >
+                                    <LayoutDashboard size={20} />
+                                    <span>Dashboard</span>
+                                </Link>
+                            )}
+
                             <Button
                                 onClick={() => {
                                     onLogout();
