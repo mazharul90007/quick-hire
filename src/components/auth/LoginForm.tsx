@@ -6,7 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, KeyRound, User, ShieldCheck } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -39,7 +47,57 @@ export const LoginForm = () => {
   return (
     <div className="w-full max-w-md mx-auto">
       <div className="bg-white border border-zinc-100 p-8 md:p-10 shadow-xl rounded-xl shadow-zinc-200/50 font-epilogue">
-        <div className="text-center mb-10">
+        <div className="text-center mb-10 relative px-10">
+          <div className="absolute right-0 top-0">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="rounded-full border-zinc-200 hover:border-[#4640DE] hover:text-[#4640DE] transition-all cursor-pointer h-10 w-10"
+                  title="Test Credentials"
+                >
+                  <KeyRound size={20} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 font-epilogue rounded-xl border-zinc-100 shadow-2xl p-2">
+                <DropdownMenuLabel className="text-xs font-bold text-zinc-400 uppercase tracking-widest px-2 py-2">
+                  Test Credentials
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator className="bg-zinc-50" />
+                <DropdownMenuItem
+                  onClick={() => {
+                    setEmail("user@gmail.com");
+                    setPassword("pass123456");
+                  }}
+                  className="flex items-center gap-3 py-3 px-3 cursor-pointer rounded-lg hover:bg-zinc-50 focus:bg-zinc-50 transition-colors group"
+                >
+                  <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-100 transition-colors">
+                    <User size={16} />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-bold text-zinc-900 leading-none">User Account</span>
+                    <span className="text-[10px] text-zinc-500 mt-1">user@gmail.com</span>
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setEmail("admin@gmail.com");
+                    setPassword("pass123456");
+                  }}
+                  className="flex items-center gap-3 py-3 px-3 cursor-pointer rounded-lg hover:bg-zinc-50 focus:bg-zinc-50 transition-colors group"
+                >
+                  <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-100 transition-colors">
+                    <ShieldCheck size={16} />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-bold text-zinc-900 leading-none">Admin Account</span>
+                    <span className="text-[10px] text-zinc-500 mt-1">admin@gmail.com</span>
+                  </div>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
           <h1 className="text-4xl font-bold tracking-tight text-[#2D2D2D] font-clash mb-3">
             Welcome Back
           </h1>
