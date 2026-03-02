@@ -1,8 +1,37 @@
+"use client";
+
 import Image from "next/image";
 import { Search, MapPin, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import districts from "../shared/districts";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const HeroSection = () => {
+  const router = useRouter();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [district, setDistrict] = useState("");
+
+  const handleSearch = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    const params = new URLSearchParams();
+    if (searchTerm) params.set("searchTerm", searchTerm);
+    if (district) params.set("district", district);
+
+    router.push(`/jobs?${params.toString()}`);
+  };
+
+  const handleTagClick = (tag: string) => {
+    router.push(`/jobs?searchTerm=${encodeURIComponent(tag)}`);
+  };
+
   return (
     <section className="relative bg-[#F8F8FD] overflow-hidden flex items-center">
       <div className="container mx-auto px-4 md:px-6 pt-16 relative z-10">
@@ -36,39 +65,58 @@ const HeroSection = () => {
 
           {/* Search Bar Card and Popular tag */}
           <div className="space-y-2 font-epilogue z-50">
-            <div className="bg-white p-2 md:p-3 shadow-2xl shadow-indigo-100/50 flex flex-col md:flex-row items-stretch md:items-center gap-4 md:max-w-3xl">
+            <form
+              onSubmit={handleSearch}
+              className="bg-white p-2 md:p-3 shadow-2xl shadow-indigo-100/50 flex flex-col md:flex-row items-stretch md:items-center gap-4 md:max-w-3xl"
+            >
               <div className="flex-1 flex items-center gap-3 px-4 border-b md:border-b-0 md:border-r border-zinc-100 py-3 md:py-0">
                 <Search className="text-[#4640DE] size-5" />
                 <input
                   type="text"
                   placeholder="Job title or keyword"
-                  className="w-full bg-transparent outline-none text-[#2D2D2D] placeholder:text-[#A8ADB7] text-sm md:text-base"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full bg-transparent outline-none text-[#2D2D2D] placeholder:text-[#A8ADB7] text-sm md:text-base font-epilogue"
                 />
               </div>
 
-              <div className="flex-1 flex items-center justify-between gap-3 px-4 py-3 md:py-0">
-                <div className="flex items-center gap-3">
-                  <MapPin className="text-[#4640DE] size-5" />
-                  <span className="text-[#2D2D2D] font-epilogue text-sm md:text-base">
-                    Florence, Italy
-                  </span>
-                </div>
-                <ChevronDown className="text-[#A8ADB7] size-4" />
+              <div className="flex-1 flex items-center gap-3 px-4 py-3 md:py-0">
+                <MapPin className="text-[#4640DE] size-5" />
+                <Select onValueChange={(value) => setDistrict(value)} value={district}>
+                  <SelectTrigger className="w-full bg-transparent border-none focus:ring-0 px-0 h-auto text-[#2D2D2D] font-epilogue text-sm md:text-base cursor-pointer shadow-none">
+                    <SelectValue placeholder="Location (District)" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-60 rounded-xl border-zinc-100 shadow-2xl">
+                    {districts.map((district) => (
+                      <SelectItem key={district} value={district} className="font-epilogue">
+                        {district}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
-              <Button className="bg-[#4640DE] hover:bg-[#3b36c0] text-white px-6 py-6 rounded-none font-bold font-epilogue font-display text-base transition-transform active:scale-95 shadow-lg shadow-indigo-500/20 cursor-pointer">
+              <Button
+                type="submit"
+                className="bg-[#4640DE] hover:bg-[#3b36c0] text-white px-6 py-6 rounded-none font-bold font-epilogue font-display text-base transition-transform active:scale-95 shadow-lg shadow-indigo-500/20 cursor-pointer"
+              >
                 Search my job
               </Button>
-            </div>
+            </form>
 
             {/* Popular Tags */}
             <div className="flex items-center gap-2 text-sm text-light font-epilogue">
               <span className="">Popular :</span>
-              <div className="flex flex-wrap gap-2 font-semibold">
-                <span>UI Designer,</span>
-                <span>UX Researcher,</span>
-                <span>Android,</span>
-                <span>Admin</span>
+              <div className="flex flex-wrap gap-2 font-semibold text-[#2D2D2D]">
+                {["UI Designer", "UX Researcher", "Android", "Admin"].map((tag, index, arr) => (
+                  <button
+                    key={tag}
+                    onClick={() => handleTagClick(tag)}
+                    className="hover:text-[#4640DE] transition-colors cursor-pointer"
+                  >
+                    {tag}{index < arr.length - 1 ? "," : ""}
+                  </button>
+                ))}
               </div>
             </div>
           </div>

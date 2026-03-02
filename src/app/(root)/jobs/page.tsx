@@ -33,6 +33,7 @@ const JobsPageContent = () => {
     jobType: searchParams.get("jobType") || "",
     employmentType: searchParams.get("employmentType") || "",
     location: searchParams.get("location") || "",
+    district: searchParams.get("district") || "",
     page: Number(searchParams.get("page")) || 1,
     limit: 10,
   });
@@ -52,14 +53,15 @@ const JobsPageContent = () => {
     if (filters.employmentType)
       params.set("employmentType", filters.employmentType);
     if (filters.location) params.set("location", filters.location);
+    if (filters.district) params.set("district", filters.district);
     if (filters.page && filters.page > 1)
       params.set("page", filters.page.toString());
 
     router.replace(`/jobs?${params.toString()}`, { scroll: false });
   }, [filters, router]);
 
-  const handleSearch = (searchTerm: string, location: string) => {
-    setFilters((prev) => ({ ...prev, searchTerm, location, page: 1 }));
+  const handleSearch = (searchTerm: string, district: string) => {
+    setFilters((prev) => ({ ...prev, searchTerm, district, page: 1 }));
   };
 
   const handleFilterChange = (type: string, value: string) => {
@@ -80,6 +82,28 @@ const JobsPageContent = () => {
     setFilters((prev) => ({ ...prev, page: newPage }));
   };
 
+  const handleClearFilters = () => {
+    setFilters({
+      searchTerm: "",
+      categoryId: "",
+      jobType: "",
+      employmentType: "",
+      location: "",
+      district: "",
+      page: 1,
+      limit: 10,
+    });
+  };
+
+  const isAnyFilterActive = !!(
+    filters.searchTerm ||
+    filters.categoryId ||
+    filters.jobType ||
+    filters.employmentType ||
+    filters.location ||
+    filters.district
+  );
+
   const jobs = jobResponse?.data || [];
   const meta = jobResponse?.meta;
   const totalResults = meta?.total || 0;
@@ -94,7 +118,7 @@ const JobsPageContent = () => {
       <JobSearchHeader
         onSearch={handleSearch}
         initialSearchTerm={filters.searchTerm}
-        initialLocation={filters.location}
+        initialDistrict={filters.district}
       />
 
       <div className="container mx-auto px-4 md:px-6 py-12">
@@ -113,6 +137,8 @@ const JobsPageContent = () => {
                 filters.employmentType?.split(",").filter(Boolean) || []
               }
               onFilterChange={handleFilterChange}
+              onClearFilters={handleClearFilters}
+              isAnyFilterActive={isAnyFilterActive}
             />
           </aside>
 
@@ -144,6 +170,8 @@ const JobsPageContent = () => {
                     filters.employmentType?.split(",").filter(Boolean) || []
                   }
                   onFilterChange={handleFilterChange}
+                  onClearFilters={handleClearFilters}
+                  isAnyFilterActive={isAnyFilterActive}
                 />
               </SheetContent>
             </Sheet>
@@ -258,11 +286,10 @@ const JobsPageContent = () => {
                           variant={
                             filters.page === pageNum ? "default" : "outline"
                           }
-                          className={`w-10 h-10 rounded-none font-bold font-epilogue ${
-                            filters.page === pageNum
-                              ? "bg-[#4640DE] hover:bg-[#3b36c0] text-white shadow-lg shadow-[#4640DE]/20"
-                              : "border-zinc-200 text-[#515B6F] hover:text-[#4640DE]"
-                          }`}
+                          className={`w-10 h-10 rounded-none font-bold font-epilogue ${filters.page === pageNum
+                            ? "bg-[#4640DE] hover:bg-[#3b36c0] text-white shadow-lg shadow-[#4640DE]/20"
+                            : "border-zinc-200 text-[#515B6F] hover:text-[#4640DE]"
+                            }`}
                           onClick={() => handlePageChange(pageNum)}
                           disabled={isLoading}
                         >

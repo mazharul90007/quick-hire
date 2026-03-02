@@ -3,20 +3,28 @@
 import { Search, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import districts from "../shared/districts";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 
 interface JobSearchHeaderProps {
-    onSearch: (searchTerm: string, location: string) => void;
+    onSearch: (searchTerm: string, district: string) => void;
     initialSearchTerm?: string;
-    initialLocation?: string;
+    initialDistrict?: string;
 }
 
-const JobSearchHeader = ({ onSearch, initialSearchTerm = "", initialLocation = "" }: JobSearchHeaderProps) => {
+const JobSearchHeader = ({ onSearch, initialSearchTerm = "", initialDistrict = "" }: JobSearchHeaderProps) => {
     const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
-    const [location, setLocation] = useState(initialLocation);
+    const [district, setDistrict] = useState(initialDistrict);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onSearch(searchTerm, location);
+        onSearch(searchTerm, district);
     };
 
     return (
@@ -48,13 +56,18 @@ const JobSearchHeader = ({ onSearch, initialSearchTerm = "", initialLocation = "
                         </div>
                         <div className="flex items-center gap-3 px-4 py-2 grow w-full">
                             <MapPin className="text-[#4640DE]" size={24} />
-                            <input
-                                type="text"
-                                placeholder="Florence, Italy"
-                                className="w-full bg-transparent outline-none font-epilogue text-[#2D2D2D] py-2"
-                                value={location}
-                                onChange={(e) => setLocation(e.target.value)}
-                            />
+                            <Select onValueChange={(value) => setDistrict(value)} value={district}>
+                                <SelectTrigger className="w-full bg-transparent border-none focus:ring-0 px-0 h-auto font-epilogue text-[#2D2D2D] py-2 cursor-pointer shadow-none">
+                                    <SelectValue placeholder="Location (District)" />
+                                </SelectTrigger>
+                                <SelectContent className="max-h-60 rounded-xl border-zinc-100 shadow-2xl">
+                                    {districts.map((districtItem) => (
+                                        <SelectItem key={districtItem} value={districtItem} className="font-epilogue">
+                                            {districtItem}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                         </div>
                         <Button
                             type="submit"

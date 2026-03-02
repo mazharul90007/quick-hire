@@ -11,6 +11,8 @@ interface JobFilterSidebarProps {
     selectedJobTypes: string[];
     selectedEmploymentTypes: string[];
     onFilterChange: (type: string, value: string) => void;
+    onClearFilters: () => void;
+    isAnyFilterActive: boolean;
 }
 
 const JobFilterSidebar = ({
@@ -19,6 +21,8 @@ const JobFilterSidebar = ({
     selectedJobTypes,
     selectedEmploymentTypes,
     onFilterChange,
+    onClearFilters,
+    isAnyFilterActive,
 }: JobFilterSidebarProps) => {
     const jobTypes = [
         { label: "Remote", value: "REMOTE" },
@@ -36,7 +40,17 @@ const JobFilterSidebar = ({
     return (
         <div className="space-y-8 sticky top-32">
             <div className="space-y-4">
-                <h3 className="text-xl font-bold font-clash text-[#2D2D2D]">Filters</h3>
+                <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-bold font-clash text-[#2D2D2D]">Filters</h3>
+                    {isAnyFilterActive && (
+                        <button
+                            onClick={onClearFilters}
+                            className="text-sm font-bold font-epilogue text-[#4640DE] hover:underline cursor-pointer"
+                        >
+                            Clear Filters
+                        </button>
+                    )}
+                </div>
                 <p className="text-sm text-[#515B6F] font-epilogue">Showing jobs based on your preference</p>
             </div>
 
