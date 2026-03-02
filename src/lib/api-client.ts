@@ -40,8 +40,12 @@ export const jobApi = {
     });
     return response.data;
   },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   createJob: async (payload: any) => {
-    const response = await api.post<ApiResponse<Job>>("/jobs/create-job", payload);
+    const response = await api.post<ApiResponse<Job>>(
+      "/jobs/create-job",
+      payload,
+    );
     return response.data;
   },
   getSingleJob: async (id: string) => {
@@ -51,7 +55,9 @@ export const jobApi = {
 };
 //==============Application Api==================
 export const applicationApi = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   createApplication: async (payload: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const response = await api.post<ApiResponse<any>>("/applications", payload);
     return response.data;
   },
