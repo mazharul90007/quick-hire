@@ -79,7 +79,7 @@ const CategorySection = () => {
             return (
               <Link
                 key={category.id}
-                href={`/jobs?category=${category.id}`}
+                href={`/jobs?categoryId=${category.id}`}
                 className={cn(
                   "group p-8 border border-zinc-200 transition-all duration-300",
                   "hover:bg-[#4640DE] hover:border-[#4640DE] hover:shadow-xl hover:shadow-indigo-200",
