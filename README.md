@@ -74,7 +74,7 @@ npm install
 
 ### 3. Environment Setup
 
-Create a `.env.local` file in the root of the client directory:
+Create a `.env.local` file in the root of the client directory:-
 
 ```env
 NEXT_PUBLIC_API_URL="https://quick-hire-server.onrender.com/api/v1"
