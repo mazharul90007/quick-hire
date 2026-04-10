@@ -2,43 +2,18 @@
 
 import {
   ArrowRight,
-  PenTool,
-  BarChart3,
-  Megaphone,
-  Briefcase,
-  Monitor,
-  Code2,
-  Layout,
-  Users,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import Heading from "../shared/Heading";
-import { useGetAllCategories } from "@/hooks/useCategory";
-
-interface Category {
-  id: string;
-  title: string;
-  jobs: any[];
-}
-
-const iconMap: Record<string, any> = {
-  Design: PenTool,
-  Sales: BarChart3,
-  Marketing: Megaphone,
-  Finance: Layout,
-  Technology: Monitor,
-  Engineering: Code2,
-  Business: Briefcase,
-  "Human Resource": Users,
-};
+import { useGetIndustries } from "@/hooks/useIndustry";
 
 const CategorySection = () => {
-  const { data: categories, isLoading } = useGetAllCategories();
+  const { data: industries = [], isLoading } = useGetIndustries();
 
   if (isLoading) {
     return (
-      <section className="py-12">
+      <section className="py-16">
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex justify-between items-end mb-12">
             <div className="h-12 w-64 bg-zinc-100 animate-pulse rounded-lg" />
@@ -48,7 +23,7 @@ const CategorySection = () => {
             {[...Array(8)].map((_, i) => (
               <div
                 key={i}
-                className="h-48 bg-zinc-100 animate-pulse rounded-none border border-zinc-200"
+                className="h-52 bg-zinc-100 animate-pulse rounded-2xl border border-zinc-200"
               />
             ))}
           </div>
@@ -58,54 +33,86 @@ const CategorySection = () => {
   }
 
   return (
-    <section className="py-12">
-      <div className="container mx-auto px-4 md:px-6">
-        {/* Header */}
-        <div className="flex justify-between items-end mb-12">
-          <Heading first={"Explore by"} second={"category"} />
+    <section className="py-16 relative overflow-hidden">
+      <div
+        className="pointer-events-none absolute -top-24 right-0 h-64 w-64 rounded-full bg-[#4640DE]/10 blur-3xl"
+        aria-hidden
+      />
+      <div className="container mx-auto px-4 md:px-6 relative">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-6 mb-12">
+          <div>
+            <Heading first={"Explore by"} second={"industry"} />
+            <p className="mt-3 text-[#515B6F] font-epilogue max-w-lg">
+              Pick a sector to see roles that match your background. Filters
+              sync with the job board.
+            </p>
+          </div>
           <Link
             href="/jobs"
-            className="flex items-center gap-2 text-[#26A4FF] font-bold font-epilogue hover:gap-3 transition-all"
+            className="inline-flex items-center gap-2 text-[#4640DE] font-bold font-epilogue hover:gap-3 transition-all shrink-0"
           >
-            Show all jobs
+            Browse all jobs
             <ArrowRight size={20} />
           </Link>
         </div>
 
-        {/* Categories Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {categories?.map((category) => {
-            const Icon = iconMap[category.title] || Layout;
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
+          {industries.map((industry) => {
+            const jobCount = industry._count?.jobs ?? 0;
+            const logoSrc = industry.logo || "/assets/images/no-image.svg";
             return (
               <Link
-                key={category.id}
-                href={`/jobs?categoryId=${category.id}`}
+                key={industry.id}
+                href={`/jobs?industryId=${industry.id}`}
                 className={cn(
-                  "group p-8 border border-zinc-200 transition-all duration-300",
-                  "hover:bg-[#4640DE] hover:border-[#4640DE] hover:shadow-xl hover:shadow-indigo-200",
+                  "group relative isolate overflow-hidden rounded-2xl border border-zinc-200/80",
+                  "bg-linear-to-b from-white to-zinc-50/70 p-6 shadow-sm transition-all duration-300",
+                  "hover:-translate-y-1 hover:border-[#4640DE]/35 hover:shadow-xl hover:shadow-indigo-200/30",
                 )}
               >
-                <div className="flex flex-row md:flex-col h-full items-center md:items-start md:justify-between gap-6">
-                  <div className="">
-                    <Icon
-                      size={40}
-                      className="text-[#4640DE] group-hover:text-white transition-colors"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-2 items-start justify-between w-full">
-                    <h3 className="text-2xl font-semibold font-clash text-[#2D2D2D] group-hover:text-white transition-colors">
-                      {category.title}
-                    </h3>
-                    <div className="flex justify-between items-center w-full">
-                      <p className="text-[#848a99] group-hover:text-indigo-100 font-epilogue transition-colors">
-                        {category.jobs?.length || 0} jobs available
-                      </p>
-                      <ArrowRight
-                        size={20}
-                        className="text-[#2D2D2D] group-hover:text-white transition-colors"
+                <div
+                  className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-[#4640DE]/8 blur-2xl transition-opacity group-hover:opacity-90"
+                  aria-hidden
+                />
+                <div className="relative z-10 flex h-full flex-col">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm">
+                      <img
+                        src={logoSrc}
+                        alt={industry.name}
+                        className="h-10 w-10 object-contain"
+                        onError={(e) => {
+                          e.currentTarget.src = "/assets/images/no-image.svg";
+                        }}
                       />
                     </div>
+                    <span className="inline-flex items-center rounded-md border border-zinc-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-zinc-600">
+                      {jobCount} {jobCount === 1 ? "job" : "jobs"}
+                    </span>
                   </div>
+
+                  <div className="mt-5 space-y-2">
+                    <h3 className="font-clash text-xl font-semibold tracking-tight text-[#2D2D2D] transition-colors group-hover:text-[#4640DE]">
+                      {industry.name}
+                    </h3>
+                    <p className="text-sm leading-relaxed text-[#848a99] font-epilogue">
+                      Explore open positions and specializations in this industry.
+                    </p>
+                  </div>
+
+                  <div className="mt-auto pt-5">
+                    <span className="inline-flex items-center gap-2 text-sm font-semibold text-[#4640DE]">
+                      View opportunities
+                      <ArrowRight
+                        className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1"
+                        aria-hidden
+                      />
+                    </span>
+                  </div>
+                </div>
+                <div className="sr-only">
+                  {industry.name} industry with {jobCount}{" "}
+                  {jobCount === 1 ? "job" : "jobs"} available
                 </div>
               </Link>
             );

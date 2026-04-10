@@ -1,51 +1,26 @@
 import type { Metadata } from "next";
-import { Inter, Epilogue } from "next/font/google";
-import localFont from "next/font/local";
+import { DM_Sans, Syne } from "next/font/google";
 import "./globals.css";
+import Providers from "@/components/shared/Providers";
+import { Toaster } from "sonner";
 
-const inter = Inter({
-  variable: "--font-inter",
+const dmSans = DM_Sans({
+  variable: "--font-dm",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
-const epilogue = Epilogue({
-  variable: "--font-epilogue",
+const syne = Syne({
+  variable: "--font-syne",
   subsets: ["latin"],
-});
-
-const clashDisplay = localFont({
-  src: [
-    {
-      path: "../../public/assets/fonts/ClashDisplay-Regular.ttf",
-      weight: "400",
-      style: "normal",
-    },
-    {
-      path: "../../public/assets/fonts/ClashDisplay-Medium.ttf",
-      weight: "500",
-      style: "normal",
-    },
-    {
-      path: "../../public/assets/fonts/ClashDisplay-Semibold.ttf",
-      weight: "600",
-      style: "normal",
-    },
-    {
-      path: "../../public/assets/fonts/ClashDisplay-Bold.ttf",
-      weight: "700",
-      style: "normal",
-    },
-  ],
-  variable: "--font-clash",
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
-  title: "QuickHire",
-  description: "Best Job Hunting Platform",
+  title: "QuickHire — Hire faster. Work smarter.",
+  description:
+    "Discover roles, trusted companies, and a hiring stack built for speed.",
 };
-
-import Providers from "@/components/shared/Providers";
-import { Toaster } from "sonner";
 
 export default function RootLayout({
   children,
@@ -55,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} ${epilogue.variable} ${clashDisplay.variable} antialiased`}
+        className={`${dmSans.variable} ${syne.variable} antialiased font-sans`}
       >
         <Providers>
           {children}

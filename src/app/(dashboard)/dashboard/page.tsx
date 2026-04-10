@@ -1,234 +1,473 @@
 "use client";
 
-import { useState } from "react";
-
-import {
-  Building2,
-  Briefcase,
-  Users,
-  LayoutGrid,
-  ArrowUpRight,
-  Plus,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useMemo } from "react";
+import Image from "next/image";
 import Link from "next/link";
+import {
+  ArrowRight,
+  Briefcase,
+  Building2,
+  ClipboardList,
+  Clock,
+  Layers,
+  MapPin,
+  MoreVertical,
+  Star,
+  TrendingUp,
+} from "lucide-react";
+import { authClient } from "@/lib/auth-client";
 import { useGetAllJobs } from "@/hooks/useJob";
-import { useGetAllCategories } from "@/hooks/useCategory";
-import CreateJobModal from "@/components/dashboard/CreateJobModal";
-import CreateCategoryModal from "@/components/dashboard/CreateCategoryModal";
+import { useGetApplications } from "@/hooks/useApplication";
+import { useGetIndustries } from "@/hooks/useIndustry";
+import { AdminStatCard } from "@/components/dashboard/AdminStatCard";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import type { Job } from "@/types";
+import {
+  jobCompanyLogo,
+  jobCompanyName,
+  formatJobType,
+  formatEmploymentType,
+} from "@/lib/job-display";
 
-export default function AdminPage() {
-  const [isJobModalOpen, setIsJobModalOpen] = useState(false);
-  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
-  // Fetch Jobs for Total Count and Recent Postings
-  const { data: jobResponse, isLoading: jobsLoading } = useGetAllJobs({
+function relativePosted(createdAt: string): string {
+  const d = new Date(createdAt);
+  const ms = Date.now() - d.getTime();
+  const min = Math.floor(ms / 60000);
+  if (min < 1) return "Just now";
+  if (min < 60) return `${min}m ago`;
+  const hr = Math.floor(min / 60);
+  if (hr < 24) return `${hr}h ago`;
+  const day = Math.floor(hr / 24);
+  if (day < 7) return `${day}d ago`;
+  return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
+
+function splitSalary(s: string): { amount: string; suffix: string } {
+  const t = s.trim();
+  const slash = t.indexOf("/");
+  if (slash === -1) return { amount: t, suffix: "" };
+  return {
+    amount: t.slice(0, slash).trim(),
+    suffix: t.slice(slash).trim(),
+  };
+}
+
+function jobSkillTags(job: Job): string[] {
+  const raw = [...(job.requiredSkills ?? []), ...(job.tags ?? [])]
+    .map((x) => String(x).trim())
+    .filter(Boolean);
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const x of raw) {
+    const k = x.toLowerCase();
+    if (seen.has(k)) continue;
+    seen.add(k);
+    out.push(x);
+    if (out.length >= 4) break;
+  }
+  return out;
+}
+
+function jobLocationLine(job: Job): string {
+  const parts = [job.location, job.district].filter(Boolean);
+  if (parts.length) return parts.join(", ");
+  const addr = job.recruiter?.companyAddress;
+  if (addr) return addr;
+  if (job.jobType === "REMOTE") return "Remote";
+  return "—";
+}
+
+export default function DashboardOverviewPage() {
+  const { data: session } = authClient.useSession();
+
+  const { data: allJobsMeta } = useGetAllJobs({ limit: 1, page: 1 });
+  const { data: activeJobsMeta } = useGetAllJobs({
+    limit: 1,
+    page: 1,
+    status: "ACTIVE",
+  });
+  const { data: featuredJobsMeta } = useGetAllJobs({
+    limit: 1,
+    page: 1,
+    status: "ACTIVE",
+    featured: true,
+  });
+  const { data: recentJobsRes, isLoading: jobsLoading } = useGetAllJobs({
     limit: 5,
     sortBy: "createdAt",
     sortOrder: "desc",
   });
+  const { data: appsTotalRes, isLoading: appsLoading } = useGetApplications({
+    limit: 1,
+    page: 1,
+  });
+  const { data: industries = [], isLoading: indLoading } = useGetIndustries();
 
-  // Fetch Categories for Total Count
-  const { data: categoryResponse, isLoading: categoriesLoading } =
-    useGetAllCategories();
+  const totalJobs = allJobsMeta?.meta?.total ?? 0;
+  const activeJobs = activeJobsMeta?.meta?.total ?? 0;
+  const featuredJobs = featuredJobsMeta?.meta?.total ?? 0;
+  const totalApps = appsTotalRes?.meta?.total ?? 0;
+  const industryCount = industries.length;
 
-  const totalJobs = jobResponse?.meta?.total || 0;
-  const recentJobs = jobResponse?.data || [];
-  const totalCategories = categoryResponse?.length || 0;
+  const recentJobs = recentJobsRes?.data ?? [];
 
-  const isLoading = jobsLoading || categoriesLoading;
+  const industryJobRows = useMemo(() => {
+    const rows = industries.map((i) => ({
+      id: i.id,
+      name: i.name,
+      count: i._count?.jobs ?? 0,
+    }));
+    rows.sort((a, b) => b.count - a.count);
+    const max = Math.max(...rows.map((r) => r.count), 1);
+    return rows.map((r) => ({
+      ...r,
+      pct: r.count === 0 ? 0 : Math.round((r.count / max) * 100),
+    }));
+  }, [industries]);
+
+  const subIndustryTotal = useMemo(
+    () =>
+      industries.reduce((s, i) => s + (i.subIndustries?.length ?? 0), 0),
+    [industries],
+  );
 
   return (
-    <div className="space-y-10">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-1">
-          <h1 className="text-4xl font-bold font-clash text-[#2D2D2D]">
-            Dashboard
+    <div className="space-y-10 max-w-7xl mx-auto">
+      <header className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+        <div>
+          <p className="mb-2 font-epilogue text-sm font-semibold uppercase tracking-widest text-zinc-500">
+            Control center
+          </p>
+          <h1 className="font-clash text-4xl font-bold tracking-tight text-zinc-900 md:text-5xl">
+            Welcome back
+            {session?.user?.name ? `, ${session.user.name.split(" ")[0]}` : ""}
           </h1>
-          <p className="text-[#515B6F] font-epilogue">
-            Overview of your application activities.
+          <p className="mt-3 max-w-xl font-epilogue text-lg text-zinc-600">
+            Monitor listings, applications, and taxonomy from your live API.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap gap-3">
           <Button
-            onClick={() => setIsJobModalOpen(true)}
-            className="bg-[#4640DE] hover:bg-[#3b36c0] text-white h-12 px-6 font-bold font-epilogue rounded-none shadow-lg shadow-[#4640DE]/20"
+            asChild
+            className="rounded-xl bg-zinc-900 font-bold text-white hover:bg-zinc-800"
           >
-            <Plus className="mr-2" size={18} />
-            Post New Job
+            <Link href="/dashboard/applications">
+              Review applications
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+          <Button
+            asChild
+            variant="outline"
+            className="rounded-xl border-zinc-300 bg-white font-bold text-zinc-800 hover:bg-zinc-50"
+          >
+            <Link href="/dashboard/jobs">Browse jobs</Link>
           </Button>
         </div>
-      </div>
+      </header>
 
-      <CreateJobModal
-        isOpen={isJobModalOpen}
-        onClose={() => setIsJobModalOpen(false)}
-      />
+      <section className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <AdminStatCard
+          label="Total jobs"
+          value={jobsLoading ? "—" : totalJobs}
+          hint="All statuses in database"
+          icon={Briefcase}
+          href="/dashboard/jobs"
+          accent="indigo"
+        />
+        <AdminStatCard
+          label="Active listings"
+          value={jobsLoading ? "—" : activeJobs}
+          hint="Visible on public board"
+          icon={TrendingUp}
+          href="/jobs"
+          accent="emerald"
+        />
+        <AdminStatCard
+          label="Applications"
+          value={appsLoading ? "—" : totalApps}
+          hint="Submissions (all roles scoped on API)"
+          icon={ClipboardList}
+          href="/dashboard/applications"
+          accent="violet"
+        />
+        <AdminStatCard
+          label="Featured active"
+          value={jobsLoading ? "—" : featuredJobs}
+          hint="Promoted & active jobs"
+          icon={Star}
+          accent="amber"
+        />
+      </section>
 
-      <CreateCategoryModal
-        isOpen={isCategoryModalOpen}
-        onClose={() => setIsCategoryModalOpen(false)}
-      />
-
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {[
-          {
-            label: "Total Jobs",
-            value: isLoading ? "..." : totalJobs.toString(),
-            icon: Briefcase,
-            color: "bg-blue-50 text-blue-600",
-            link: "/dashboard/jobs",
-          },
-          {
-            label: "Total Categories",
-            value: isLoading ? "..." : totalCategories.toString(),
-            icon: LayoutGrid,
-            color: "bg-orange-50 text-orange-600",
-            link: "/dashboard/categories",
-          },
-          {
-            label: "Total Users",
-            value: "1,240",
-            icon: Users,
-            color: "bg-emerald-50 text-emerald-600",
-            link: "/dashboard/users",
-          }, // Static for now as per API availability
-          {
-            label: "Companies",
-            value: "42",
-            icon: Building2,
-            color: "bg-indigo-50 text-indigo-600",
-            link: "/companies",
-          },
-        ].map((stat, i) => (
-          <div
-            key={i}
-            className="bg-white p-8 border border-zinc-100 shadow-sm transition-all hover:shadow-md group rounded-lg"
-          >
-            <div className="flex items-start justify-between mb-4">
-              <div className={`p-3 rounded ${stat.color}`}>
-                <stat.icon size={24} />
-              </div>
-              <Link
-                href={stat.link}
-                className="text-[#515B6F] hover:text-[#4640DE] cursor-pointer"
-              >
-                <ArrowUpRight size={20} />
-              </Link>
-            </div>
-            <div className="space-y-1">
-              <h3 className="text-3xl font-bold font-clash text-[#2D2D2D]">
-                {stat.value}
-              </h3>
-              <p className="text-[#515B6F] font-epilogue text-sm font-medium uppercase tracking-wider">
-                {stat.label}
+      <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm md:p-8 lg:col-span-2">
+          <div className="mb-6 flex items-center justify-between gap-4">
+            <div>
+              <h2 className="flex items-center gap-2 font-clash text-xl font-bold text-zinc-900">
+                <Building2 className="h-5 w-5 text-zinc-600" />
+                Jobs by industry
+              </h2>
+              <p className="mt-1 font-epilogue text-sm text-zinc-500">
+                Total jobs per industry (live counts from your database).
               </p>
             </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Recent Activity / Content Sections */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 bg-white border border-zinc-100 p-8 shadow-sm rounded-lg">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-xl font-bold font-clash text-[#2D2D2D]">
-              Recent Job Postings
-            </h2>
-            <Link
-              href="/dashboard/jobs"
-              className="text-[#4640DE] font-bold text-sm hover:underline"
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              className="shrink-0 rounded-lg border-zinc-300 text-zinc-800 hover:bg-zinc-50"
             >
-              View All
-            </Link>
+              <Link href="/dashboard/categories">Manage</Link>
+            </Button>
           </div>
-          <div className="space-y-4">
-            {isLoading ? (
-              Array.from({ length: 3 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="h-20 bg-zinc-50 animate-pulse border border-zinc-100"
-                />
-              ))
-            ) : recentJobs.length > 0 ? (
-              recentJobs.map((job) => (
-                <div
-                  key={job.id}
-                  className="flex items-center justify-between p-4 border border-zinc-50 hover:bg-zinc-50/50 transition-all"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-[#4640DE]/5 rounded-none flex items-center justify-center font-bold text-[#4640DE] font-clash">
-                      {job.companyName
-                        ? job.companyName.charAt(0)
-                        : job.title.charAt(0)}
-                    </div>
-                    <div>
-                      <h4 className="font-bold font-epilogue text-[#2D2D2D]">
-                        {job.title}
-                      </h4>
-                      <p className="text-xs text-[#515B6F] font-medium">
-                        {job.category?.title} • {job.location || "Remote"}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <span className="px-3 py-1 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100 uppercase tracking-wider">
-                      {job.employmentType?.replace("_", " ")}
+          {indLoading ? (
+            <p className="py-10 text-center font-epilogue text-sm text-zinc-500">
+              Loading industries…
+            </p>
+          ) : industryJobRows.length === 0 ? (
+            <p className="py-10 text-center font-epilogue text-sm text-zinc-500">
+              No industries yet. Add some under taxonomy.
+            </p>
+          ) : (
+            <ul className="divide-y divide-dashed divide-zinc-200">
+              {industryJobRows.map((row) => (
+                <li key={row.id}>
+                  <div className="grid grid-cols-1 items-center gap-2 py-4 sm:grid-cols-[minmax(0,1fr)_3.5rem_minmax(6rem,1.2fr)] sm:gap-4 md:py-5">
+                    <span
+                      className="min-w-0 font-epilogue text-sm font-medium text-zinc-900 sm:text-base"
+                      title={row.name}
+                    >
+                      <span className="block truncate">{row.name}</span>
                     </span>
+                    <span className="font-epilogue text-sm tabular-nums text-zinc-800 sm:text-right">
+                      {row.count}
+                    </span>
+                    <div className="h-3 w-full min-w-0 overflow-hidden rounded-full bg-zinc-100 sm:h-3.5">
+                      <div
+                        className="h-full rounded-full bg-[#4640DE] transition-[width] duration-500 ease-out"
+                        style={{ width: `${row.pct}%` }}
+                        role="presentation"
+                      />
+                    </div>
                   </div>
-                </div>
-              ))
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div className="flex flex-col rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm md:p-8">
+          <h2 className="mb-2 font-clash text-xl font-bold text-zinc-900">
+            Taxonomy
+          </h2>
+          <p className="mb-6 font-epilogue text-sm text-zinc-500">
+            Industries and specializations powering job filters.
+          </p>
+          <div className="flex-1 space-y-4">
+            <div className="flex items-center justify-between border-b border-zinc-100 py-3">
+              <span className="font-epilogue text-zinc-600">Industries</span>
+              <span className="font-clash text-2xl font-bold text-zinc-900">
+                {indLoading ? "—" : industryCount}
+              </span>
+            </div>
+            <div className="flex items-center justify-between border-b border-zinc-100 py-3">
+              <span className="font-epilogue text-zinc-600">Sub-industries</span>
+              <span className="font-clash text-2xl font-bold text-zinc-900">
+                {indLoading ? "—" : subIndustryTotal}
+              </span>
+            </div>
+          </div>
+          <Button
+            asChild
+            variant="outline"
+            className="mt-6 rounded-xl border-zinc-300 text-zinc-800 hover:bg-zinc-50"
+          >
+            <Link href="/dashboard/categories">Manage industries</Link>
+          </Button>
+        </div>
+      </section>
+
+      <section>
+        <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm">
+          <div className="flex items-center justify-between border-b border-zinc-100 px-5 py-4 sm:px-6">
+            <h2 className="font-clash text-lg font-bold tracking-tight text-zinc-900">
+              Latest Jobs
+            </h2>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 shrink-0 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900"
+                  aria-label="More options"
+                >
+                  <MoreVertical className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard/jobs">View all jobs</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/jobs" target="_blank" rel="noreferrer">
+                    Public job board
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          <div className="space-y-3 p-4 sm:p-5">
+            {jobsLoading ? (
+              <p className="py-10 text-center font-epilogue text-sm text-zinc-500">
+                Loading…
+              </p>
+            ) : recentJobs.length === 0 ? (
+              <p className="py-10 text-center font-epilogue text-sm text-zinc-500">
+                No jobs yet.
+              </p>
             ) : (
-              <div className="py-10 text-center text-zinc-400 font-epilogue">
-                No recent job postings found.
-              </div>
+              recentJobs.map((job: Job) => {
+                const logoSrc = jobCompanyLogo(job);
+                const company = jobCompanyName(job);
+                const skillList = jobSkillTags(job);
+                const skills =
+                  skillList.length > 0
+                    ? skillList
+                    : job.industry?.name
+                      ? [job.industry.name]
+                      : [];
+                const sal = job.salary?.trim();
+                const { amount: salAmount, suffix: salSuffix } = sal
+                  ? splitSalary(sal)
+                  : { amount: "", suffix: "" };
+
+                return (
+                  <Link
+                    key={job.id}
+                    href={`/jobs/${job.id}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="block rounded-xl border border-zinc-200 bg-white p-4 transition-colors hover:border-zinc-300 hover:bg-zinc-50/80 sm:p-5"
+                  >
+                    <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-5">
+                      <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-zinc-100 bg-zinc-50">
+                        <Image
+                          src={logoSrc}
+                          alt={company}
+                          fill
+                          className="object-contain p-1.5"
+                          sizes="48px"
+                          unoptimized={
+                            logoSrc.startsWith("http") ||
+                            logoSrc.startsWith("//")
+                          }
+                        />
+                      </div>
+
+                      <div className="min-w-0 flex-1">
+                        <p className="font-clash text-base font-bold leading-snug text-zinc-900 sm:text-lg">
+                          {job.title ?? "Untitled"}
+                        </p>
+                        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 font-epilogue text-xs text-zinc-500 sm:text-sm">
+                          <span className="inline-flex items-center gap-1.5">
+                            <Briefcase
+                              className="h-3.5 w-3.5 shrink-0 text-zinc-400"
+                              aria-hidden
+                            />
+                            {formatEmploymentType(job.employmentType) ||
+                              formatJobType(job.jobType)}
+                          </span>
+                          <span className="inline-flex items-center gap-1.5">
+                            <Clock
+                              className="h-3.5 w-3.5 shrink-0 text-zinc-400"
+                              aria-hidden
+                            />
+                            {relativePosted(job.createdAt)}
+                          </span>
+                          <span className="inline-flex min-w-0 items-center gap-1.5">
+                            <MapPin
+                              className="h-3.5 w-3.5 shrink-0 text-zinc-400"
+                              aria-hidden
+                            />
+                            <span className="truncate">
+                              {jobLocationLine(job)}
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+
+                      {skills.length > 0 && (
+                        <div className="flex flex-wrap items-center gap-2 lg:max-w-[220px] lg:justify-end">
+                          {skills.map((tag) => (
+                            <span
+                              key={tag}
+                              className="rounded-md bg-[#4640DE]/10 px-2.5 py-1 font-epilogue text-[11px] font-semibold text-[#4640DE]"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      <div className="shrink-0 text-left lg:text-right">
+                        {sal ? (
+                          <>
+                            <span className="font-clash text-lg font-bold tabular-nums text-[#4640DE]">
+                              {salAmount}
+                            </span>
+                            {salSuffix ? (
+                              <span className="font-epilogue text-sm text-zinc-500">
+                                {" "}
+                                {salSuffix}
+                              </span>
+                            ) : null}
+                          </>
+                        ) : (
+                          <span className="font-epilogue text-sm text-zinc-400">
+                            Salary not listed
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })
             )}
           </div>
         </div>
+      </section>
 
-        <div className="bg-white border border-zinc-100 p-8 shadow-sm rounded-lg">
-          <h2 className="text-xl font-bold font-clash text-[#2D2D2D] mb-8">
-            Quick Actions
-          </h2>
-          <div className="space-y-3">
-            <Button
-              onClick={() => setIsCategoryModalOpen(true)}
-              variant="outline"
-              className="w-full h-14 justify-start text-[#515B6F] hover:text-[#4640DE] hover:border-[#4640DE] border-zinc-100 rounded-none font-bold"
-            >
-              <LayoutGrid className="mr-3" size={18} />
-              Add New Category
-            </Button>
-            <Link href="/dashboard/categories">
-              <Button
-                variant="outline"
-                className="w-full h-14 justify-start text-[#515B6F] hover:text-[#4640DE] hover:border-[#4640DE] border-zinc-100 rounded-none font-bold"
-              >
-                <LayoutGrid className="mr-3" size={18} />
-                Manage Categories
-              </Button>
-            </Link>
-            <Link href="/dashboard/users">
-              <Button
-                variant="outline"
-                className="w-full h-14 justify-start text-[#515B6F] hover:text-[#4640DE] hover:border-[#4640DE] border-zinc-100 rounded-none font-bold"
-              >
-                <Users className="mr-3" size={18} />
-                Manage Users
-              </Button>
-            </Link>
-            <Link href="/admin">
-              <Button
-                variant="outline"
-                className="w-full h-14 justify-start text-[#515B6F] hover:text-red-500 hover:border-red-200 border-zinc-100 rounded-none font-bold opacity-50"
-              >
-                System Logs
-              </Button>
-            </Link>
+      <section className="rounded-2xl border border-zinc-200 bg-zinc-100/80 p-8 md:p-10">
+        <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
+          <div>
+            <h2 className="font-clash text-2xl font-bold text-zinc-900">
+              Need to add a sector?
+            </h2>
+            <p className="mt-2 max-w-lg font-epilogue text-zinc-600">
+              Create industries and sub-industries so recruiters can classify
+              new posts. Changes apply immediately to job board filters.
+            </p>
           </div>
+          <Button
+            asChild
+            className="h-12 shrink-0 rounded-xl bg-zinc-900 px-8 font-bold text-white hover:bg-zinc-800"
+          >
+            <Link href="/dashboard/categories">
+              <Layers className="mr-2 h-4 w-4" />
+              Open taxonomy
+            </Link>
+          </Button>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

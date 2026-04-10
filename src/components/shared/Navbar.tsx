@@ -1,12 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState, useEffect } from "react";
-import { Menu, LogOut, LayoutDashboard, User } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import {
+  Menu,
+  LogOut,
+  LayoutDashboard,
+  ChevronDown,
+  Briefcase,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import MobileMenu from "./MobileMenu";
 import { authClient } from "@/lib/auth-client";
+import { isApplicant, isRecruiter, isStaffAdmin } from "@/lib/roles";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,14 +26,25 @@ import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
+function initialsFromName(name: string | null | undefined): string {
+  if (!name?.trim()) return "?";
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
 const Navbar = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { data: session, isPending } = authClient.useSession();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- avoid SSR/session UI mismatch
+    setHasMounted(true);
+  }, []);
 
-  // Logout handler
   const handleLogout = async () => {
     await authClient.signOut({
       fetchOptions: {
@@ -38,165 +56,210 @@ const Navbar = () => {
     });
   };
 
-  // Scroll effect
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-    window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => setIsScrolled(window.scrollY > 4);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const navLinks = [
-    { name: "Find Jobs", href: "/jobs" },
-    { name: "Browse Companies", href: "/companies" },
+    { name: "Home", href: "/" },
+    { name: "Find jobs", href: "/jobs" },
+    { name: "Courses", href: "/courses" },
+    { name: "Companies", href: "/companies" },
+    { name: "Contact us", href: "/contact" },
   ];
+
+  const userInitials = useMemo(
+    () => initialsFromName(session?.user?.name),
+    [session?.user?.name],
+  );
 
   return (
     <>
-      <nav
+      <header
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out bg-transparent py-4 sm:py-3",
-          isScrolled ? "backdrop-blur-md shadow-md bg-white/80" : "",
-          isMobileMenuOpen ? "bg-white" : "",
+          "fixed top-0 left-0 right-0 z-50 transition-[box-shadow,background-color,border-color] duration-200",
+          "border-b bg-background/95 backdrop-blur-md supports-backdrop-filter:bg-background/80",
+          isScrolled || isMobileMenuOpen
+            ? "border-border shadow-sm"
+            : "border-transparent shadow-none",
         )}
       >
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4 md:gap-8">
-              {/* Logo */}
-              <Link href="/" className="flex items-center gap-2 group">
-                <Image
-                  src="/assets/images/brand-logo.svg"
-                  alt="QuickHire"
-                  width={32}
-                  height={32}
-                  className="object-contain"
-                />
-                <span className="text-xl font-bold tracking-tight text-[#2D2D2D] font-clash">
-                  QuickHire
-                </span>
-              </Link>
+        <div className="mx-auto flex h-14 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
+          <Link
+            href="/"
+            className="flex shrink-0 items-center gap-0.5 rounded-md py-1 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          >
+            <span className="relative block h-8 w-9 shrink-0 sm:h-9 sm:w-10">
+              <Image
+                src="/assets/images/quick-hire-images/quick_hire_logo.png"
+                alt=""
+                fill
+                className="object-contain object-left"
+                sizes="40px"
+                priority
+              />
+            </span>
+            <span className="font-clash text-base font-semibold tracking-tight text-foreground sm:text-lg">
+              QuickHire
+            </span>
+          </Link>
 
-              {/* Desktop Navigation */}
-              <div className="hidden lg:flex items-center gap-4">
-                {navLinks.map((link) => {
-                  const isActive = pathname === link.href;
-                  return (
+          <nav
+            className="hidden flex-1 justify-center lg:flex"
+            aria-label="Main"
+          >
+            <ul className="flex items-center gap-1">
+              {navLinks.map((link) => {
+                const isActive =
+                  pathname === link.href ||
+                  (link.href !== "/" && pathname.startsWith(`${link.href}/`));
+                return (
+                  <li key={link.href}>
                     <Link
-                      key={link.name}
                       href={link.href}
                       className={cn(
-                        "text-sm font-medium transition-colors relative py-1 font-display",
+                        "relative px-4 py-2 text-sm font-medium transition-colors",
                         isActive
-                          ? "text-indigo-600 font-bold"
-                          : "text-[#515B6F] hover:text-indigo-600",
+                          ? "text-foreground"
+                          : "text-muted-foreground hover:text-foreground",
                       )}
                     >
                       {link.name}
-                      {isActive && (
-                        <span className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 rounded-full animate-in fade-in zoom-in duration-300" />
-                      )}
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Action Icons / Auth Section */}
-            <div className="flex items-center gap-2 md:gap-4">
-              {isPending ? (
-                <div className="h-10 w-24 bg-zinc-100 animate-pulse rounded-xl" />
-              ) : session ? (
-                <div className="flex items-center gap-3">
-                  {/* Desktop User Dropdown */}
-                  <div className="hidden md:block">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="rounded-full hover:bg-green-50 text-zinc-600 transition-colors h-10 w-10 cursor-pointer hover:text-green-600 border shadow"
-                        >
-                          <User size={20} />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        align="end"
-                        className="w-56 mt-2 p-2 rounded-xl shadow-xl border-zinc-100"
-                      >
-                        <DropdownMenuLabel className="font-normal">
-                          <div className="flex flex-col space-y-1">
-                            <p className="text-sm font-bold leading-none text-zinc-900 font-display">
-                              {session.user.name}
-                            </p>
-                            <p className="text-xs leading-none text-zinc-500 font-display">
-                              {session.user.email}
-                            </p>
-                          </div>
-                        </DropdownMenuLabel>
-                        <DropdownMenuSeparator className="my-2 bg-zinc-100" />
-                        {(session.user as any).role === "ADMIN" && (
-                          <Link href="/dashboard">
-                            <DropdownMenuItem className="cursor-pointer rounded-lg focus:bg-indigo-50 focus:text-indigo-600 font-display py-2.5">
-                              <LayoutDashboard size={16} className="mr-2" />
-                              <span>Dashboard</span>
-                            </DropdownMenuItem>
-                          </Link>
+                      <span
+                        className={cn(
+                          "absolute bottom-0 left-4 right-4 h-0.5 rounded-full bg-primary transition-opacity",
+                          isActive ? "opacity-100" : "opacity-0",
                         )}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
+                        aria-hidden
+                      />
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
 
+          <div className="ml-auto flex items-center gap-2 sm:gap-3">
+            {!hasMounted || isPending ? (
+              <div className="hidden h-9 w-40 animate-pulse rounded-md bg-muted sm:block" />
+            ) : session ? (
+              <div className="flex items-center gap-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="h-9 gap-2 rounded-lg border-border bg-card px-2.5 shadow-none hover:bg-accent sm:pl-2 sm:pr-3"
+                    >
+                      <span className="flex h-7 w-7 items-center justify-center rounded-md bg-primary/10 text-xs font-semibold text-primary">
+                        {userInitials}
+                      </span>
+                      <span className="hidden max-w-[140px] truncate text-left text-sm font-medium sm:inline">
+                        {session.user.name}
+                      </span>
+                      <ChevronDown
+                        className="hidden size-4 shrink-0 text-muted-foreground sm:block"
+                        aria-hidden
+                      />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuLabel className="font-normal">
+                      <p className="truncate text-sm font-semibold">
+                        {session.user.name}
+                      </p>
+                      <p className="truncate text-xs text-muted-foreground">
+                        {session.user.email}
+                      </p>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {isStaffAdmin((session.user as any).role) && (
+                      <Link href="/dashboard">
+                        <DropdownMenuItem className="cursor-pointer">
+                          <LayoutDashboard size={16} className="mr-2" />
+                          Admin dashboard
+                        </DropdownMenuItem>
+                      </Link>
+                    )}
+                    {isRecruiter((session.user as any).role) && (
+                      <Link href="/recruiter">
+                        <DropdownMenuItem className="cursor-pointer">
+                          <LayoutDashboard size={16} className="mr-2" />
+                          Recruiter hub
+                        </DropdownMenuItem>
+                      </Link>
+                    )}
+                    {isApplicant((session.user as any).role) && (
+                      <Link href="/applicant">
+                        <DropdownMenuItem className="cursor-pointer">
+                          <LayoutDashboard size={16} className="mr-2" />
+                          Applicant hub
+                        </DropdownMenuItem>
+                      </Link>
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      className="cursor-pointer text-destructive focus:text-destructive"
+                      onClick={handleLogout}
+                    >
+                      <LogOut size={16} className="mr-2" />
+                      Sign out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            ) : (
+              <div className="hidden items-center gap-2 sm:flex">
+                <Link href="/signup">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-9 rounded-lg border-border font-medium shadow-none"
+                  >
+                    <Briefcase className="size-4" />
+                    Post a job
+                  </Button>
+                </Link>
+                <Link href="/login">
                   <Button
                     variant="ghost"
-                    size="icon"
-                    onClick={handleLogout}
-                    className="rounded-full hover:bg-red-50 text-zinc-500 hover:text-red-600 transition-colors h-10 w-10 cursor-pointer border"
-                    title="Logout"
+                    size="sm"
+                    className="h-9 rounded-lg px-3 font-medium text-muted-foreground hover:text-foreground"
                   >
-                    <LogOut size={20} />
+                    Sign in
                   </Button>
-                </div>
-              ) : (
-                <div className="hidden sm:flex items-center gap-2">
-                  <Link href="/login">
-                    <Button
-                      variant="ghost"
-                      className="text-sm font-bold text-indigo-600 hover:text-indigo-700 font-display px-4"
-                    >
-                      Login
-                    </Button>
-                  </Link>
-                  <div className="bg-zinc-200" />
-                  <Link href="/signup">
-                    <Button className="bg-indigo-600 hover:bg-indigo-500 text-white py-3 px-4 font-bold font-display shadow-lg shadow-indigo-500/20 rounded-none">
-                      Sign Up
-                    </Button>
-                  </Link>
-                </div>
-              )}
+                </Link>
+                <Link href="/signup">
+                  <Button
+                    size="sm"
+                    className="h-9 rounded-lg px-4 font-semibold shadow-sm"
+                  >
+                    Create account
+                  </Button>
+                </Link>
+              </div>
+            )}
 
-              {/* Mobile Toggle - Placed on the right */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="lg:hidden rounded-xl cursor-pointer text-zinc-600 hover:bg-zinc-100"
-                onClick={() => setIsMobileMenuOpen(true)}
-              >
-                <Menu size={24} />
-              </Button>
-            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 rounded-lg lg:hidden"
+              onClick={() => setIsMobileMenuOpen(true)}
+              aria-label="Open menu"
+            >
+              <Menu className="size-5" />
+            </Button>
           </div>
         </div>
-      </nav>
+      </header>
 
-      {/* Mobile Menu Overlay - Outside nav to avoid inherited blur */}
       <MobileMenu
         isOpen={isMobileMenuOpen}
         onClose={() => setIsMobileMenuOpen(false)}
         links={navLinks}
-        session={session}
+        session={!hasMounted || isPending ? null : session}
         onLogout={handleLogout}
         pathname={pathname}
       />

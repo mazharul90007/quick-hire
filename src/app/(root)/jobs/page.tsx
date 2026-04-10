@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useGetAllJobs } from "@/hooks/useJob";
-import { useGetAllCategories } from "@/hooks/useCategory";
+import { useGetIndustries } from "@/hooks/useIndustry";
 import JobSearchHeader from "@/components/Jobs/JobSearchHeader";
 import JobFilterSidebar from "@/components/Jobs/JobFilterSidebar";
 import JobListItem from "@/components/Jobs/JobListItem";
@@ -20,16 +20,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
-import { Suspense } from "react";
-
 const JobsPageContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Local state for filters derived from URL
   const [filters, setFilters] = useState<JobFilters>({
     searchTerm: searchParams.get("searchTerm") || "",
-    categoryId: searchParams.get("categoryId") || "",
+    industryId: searchParams.get("industryId") || "",
+    subIndustryId: searchParams.get("subIndustryId") || "",
     jobType: searchParams.get("jobType") || "",
     employmentType: searchParams.get("employmentType") || "",
     location: searchParams.get("location") || "",
@@ -40,15 +38,15 @@ const JobsPageContent = () => {
 
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
 
-  // Fetch data
   const { data: jobResponse, isLoading } = useGetAllJobs(filters);
-  const { data: categories } = useGetAllCategories();
+  const { data: industries = [] } = useGetIndustries();
 
-  // Sync state with URL changes
   useEffect(() => {
     const params = new URLSearchParams();
     if (filters.searchTerm) params.set("searchTerm", filters.searchTerm);
-    if (filters.categoryId) params.set("categoryId", filters.categoryId);
+    if (filters.industryId) params.set("industryId", filters.industryId);
+    if (filters.subIndustryId)
+      params.set("subIndustryId", filters.subIndustryId);
     if (filters.jobType) params.set("jobType", filters.jobType);
     if (filters.employmentType)
       params.set("employmentType", filters.employmentType);
@@ -85,7 +83,8 @@ const JobsPageContent = () => {
   const handleClearFilters = () => {
     setFilters({
       searchTerm: "",
-      categoryId: "",
+      industryId: "",
+      subIndustryId: "",
       jobType: "",
       employmentType: "",
       location: "",
@@ -97,7 +96,8 @@ const JobsPageContent = () => {
 
   const isAnyFilterActive = !!(
     filters.searchTerm ||
-    filters.categoryId ||
+    filters.industryId ||
+    filters.subIndustryId ||
     filters.jobType ||
     filters.employmentType ||
     filters.location ||
@@ -109,12 +109,16 @@ const JobsPageContent = () => {
   const totalResults = meta?.total || 0;
   const totalPages = meta ? Math.ceil(meta.total / meta.limit) : 0;
 
-  // Calculate showing range
   const startResult = meta ? (meta.page - 1) * meta.limit + 1 : 0;
   const endResult = meta ? Math.min(meta.page * meta.limit, meta.total) : 0;
 
+  const industrySelection =
+    filters.industryId?.split(",").filter(Boolean) || [];
+  const subSelection =
+    filters.subIndustryId?.split(",").filter(Boolean) || [];
+
   return (
-    <div className="min-h-screen bg-white pt-20 pb-20">
+    <div className="min-h-screen bg-gradient-to-b from-[#F8F9FC] to-white pt-20 pb-20">
       <JobSearchHeader
         onSearch={handleSearch}
         initialSearchTerm={filters.searchTerm}
@@ -123,13 +127,11 @@ const JobsPageContent = () => {
 
       <div className="container mx-auto px-4 md:px-6 py-12">
         <div className="flex flex-col lg:flex-row gap-12">
-          {/* Desktop Sidebar */}
           <aside className="hidden lg:block w-72 flex-shrink-0">
             <JobFilterSidebar
-              categories={categories || []}
-              selectedCategories={
-                filters.categoryId?.split(",").filter(Boolean) || []
-              }
+              industries={industries}
+              selectedIndustryIds={industrySelection}
+              selectedSubIndustryIds={subSelection}
               selectedJobTypes={
                 filters.jobType?.split(",").filter(Boolean) || []
               }
@@ -142,13 +144,12 @@ const JobsPageContent = () => {
             />
           </aside>
 
-          {/* Mobile Filter Trigger */}
           <div className="lg:hidden flex items-center justify-between mb-6">
             <Sheet>
               <SheetTrigger asChild>
                 <Button
                   variant="outline"
-                  className="flex items-center gap-2 font-display"
+                  className="flex items-center gap-2 font-display border-zinc-200 shadow-sm"
                 >
                   <SlidersHorizontal size={18} />
                   Filters
@@ -159,10 +160,9 @@ const JobsPageContent = () => {
                 className="w-[300px] sm:w-[400px] overflow-y-auto"
               >
                 <JobFilterSidebar
-                  categories={categories || []}
-                  selectedCategories={
-                    filters.categoryId?.split(",").filter(Boolean) || []
-                  }
+                  industries={industries}
+                  selectedIndustryIds={industrySelection}
+                  selectedSubIndustryIds={subSelection}
                   selectedJobTypes={
                     filters.jobType?.split(",").filter(Boolean) || []
                   }
@@ -187,28 +187,29 @@ const JobsPageContent = () => {
             </p>
           </div>
 
-          {/* Main Results Area */}
           <main className="grow space-y-8">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1">
                 <h2 className="text-3xl font-bold font-clash text-[#2D2D2D]">
-                  All Jobs
+                  All jobs
                 </h2>
                 <p className="text-[#515B6F] font-epilogue">
                   Showing {startResult}-{endResult} of {totalResults} results
                 </p>
               </div>
 
-              <div className="flex items-center gap-4 bg-zinc-50 p-1.5 rounded-lg border border-zinc-100">
+              <div className="flex items-center gap-2 bg-white p-1.5 rounded-xl border border-zinc-100 shadow-sm">
                 <button
+                  type="button"
                   onClick={() => setViewMode("grid")}
-                  className={`p-2 rounded-md transition-all ${viewMode === "grid" ? "bg-white text-[#4640DE] shadow-sm" : "text-zinc-400"}`}
+                  className={`p-2 rounded-lg transition-all ${viewMode === "grid" ? "bg-[#4640DE] text-white shadow-md" : "text-zinc-400 hover:text-zinc-600"}`}
                 >
                   <LayoutGrid size={20} />
                 </button>
                 <button
+                  type="button"
                   onClick={() => setViewMode("list")}
-                  className={`p-2 rounded-md transition-all ${viewMode === "list" ? "bg-white text-[#4640DE] shadow-sm" : "text-zinc-400"}`}
+                  className={`p-2 rounded-lg transition-all ${viewMode === "list" ? "bg-[#4640DE] text-white shadow-md" : "text-zinc-400 hover:text-zinc-600"}`}
                 >
                   <List size={20} />
                 </button>
@@ -220,7 +221,7 @@ const JobsPageContent = () => {
                 {[...Array(5)].map((_, i) => (
                   <div
                     key={i}
-                    className="h-40 bg-zinc-50 animate-pulse border border-zinc-100"
+                    className="h-40 bg-zinc-50 animate-pulse rounded-xl border border-zinc-100"
                   />
                 ))}
               </div>
@@ -237,22 +238,22 @@ const JobsPageContent = () => {
                 )}
               </div>
             ) : (
-              <div className="text-center py-20 border-2 border-dashed border-zinc-100 rounded-none bg-zinc-50/30">
+              <div className="text-center py-20 border-2 border-dashed border-zinc-200 rounded-2xl bg-white/80">
                 <div className="max-w-xs mx-auto space-y-4">
-                  <div className="w-16 h-16 bg-zinc-100 rounded-full flex items-center justify-center mx-auto">
-                    <Search size={32} className="text-zinc-300" />
+                  <div className="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mx-auto">
+                    <Search size={32} className="text-[#4640DE]" />
                   </div>
                   <h3 className="text-xl font-bold font-clash text-[#2D2D2D]">
                     No jobs found
                   </h3>
                   <p className="text-[#515B6F] font-epilogue">
-                    We could not find any jobs matching your current filters.
-                    Try adjusting them or search for something else.
+                    Try different industries or work arrangements, or broaden
+                    your search.
                   </p>
                   <Button
                     variant="link"
                     className="text-[#4640DE] font-bold"
-                    onClick={() => setFilters({ page: 1, limit: 10 })}
+                    onClick={handleClearFilters}
                   >
                     Clear all filters
                   </Button>
@@ -260,18 +261,17 @@ const JobsPageContent = () => {
               </div>
             )}
 
-            {/* Pagination Controls */}
             {totalPages > 0 && (
               <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-12 border-t border-zinc-100">
                 <div className="text-[#515B6F] font-epilogue text-sm order-2 sm:order-1">
-                  Showing page {meta?.page} of {totalPages}
+                  Page {meta?.page} of {totalPages}
                 </div>
 
                 <div className="flex items-center gap-2 order-1 sm:order-2">
                   <Button
                     variant="outline"
                     size="icon"
-                    className="rounded-none border-zinc-200"
+                    className="rounded-xl border-zinc-200"
                     disabled={filters.page === 1 || isLoading}
                     onClick={() => handlePageChange((filters.page || 1) - 1)}
                   >
@@ -286,10 +286,11 @@ const JobsPageContent = () => {
                           variant={
                             filters.page === pageNum ? "default" : "outline"
                           }
-                          className={`w-10 h-10 rounded-none font-bold font-epilogue ${filters.page === pageNum
-                            ? "bg-[#4640DE] hover:bg-[#3b36c0] text-white shadow-lg shadow-[#4640DE]/20"
-                            : "border-zinc-200 text-[#515B6F] hover:text-[#4640DE]"
-                            }`}
+                          className={`w-10 h-10 rounded-xl font-bold font-epilogue ${
+                            filters.page === pageNum
+                              ? "bg-[#4640DE] hover:bg-[#3b36c0] text-white shadow-lg shadow-[#4640DE]/20"
+                              : "border-zinc-200 text-[#515B6F] hover:text-[#4640DE]"
+                          }`}
                           onClick={() => handlePageChange(pageNum)}
                           disabled={isLoading}
                         >
@@ -302,7 +303,7 @@ const JobsPageContent = () => {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="rounded-none border-zinc-200"
+                    className="rounded-xl border-zinc-200"
                     disabled={filters.page === totalPages || isLoading}
                     onClick={() => handlePageChange((filters.page || 1) + 1)}
                   >
@@ -323,7 +324,7 @@ const JobsPage = () => {
     <Suspense
       fallback={
         <div className="min-h-screen bg-white pt-20 flex items-center justify-center">
-          <div className="w-12 h-12 border-4 border-[#4640DE] border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-12 h-12 border-4 border-[#4640DE] border-t-transparent rounded-full animate-spin" />
         </div>
       }
     >

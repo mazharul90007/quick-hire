@@ -13,11 +13,18 @@ import {
   Clock,
   CheckCircle2,
   ArrowLeft,
+  ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useState } from "react";
 import ApplyJobModal from "@/components/Jobs/ApplyJobModal";
+import {
+  jobCompanyLogo,
+  jobCompanyName,
+  formatJobType,
+  formatEmploymentType,
+} from "@/lib/job-display";
 
 const JobDetailsPage = () => {
   const { id } = useParams() as { id: string };
@@ -41,16 +48,15 @@ const JobDetailsPage = () => {
     return (
       <div className="min-h-screen bg-zinc-50 flex flex-col items-center justify-center p-4">
         <h2 className="text-2xl font-bold text-zinc-900 font-clash mb-2">
-          Job Not Found
+          Job not found
         </h2>
         <p className="text-zinc-600 font-epilogue mb-6 text-center max-w-md">
-          The job you are looking for might have been removed or is no longer
-          available.
+          This listing may have been removed or is no longer available.
         </p>
         <Link href="/jobs">
-          <Button className="bg-indigo-600 hover:bg-indigo-700">
+          <Button className="bg-indigo-600 hover:bg-indigo-700 rounded-xl">
             <ArrowLeft size={18} className="mr-2" />
-            Back to Jobs
+            Back to jobs
           </Button>
         </Link>
       </div>
@@ -58,45 +64,47 @@ const JobDetailsPage = () => {
   }
 
   const job = jobResponse.data;
-  const logoSrc = job.companyLogo || "/assets/images/no-image.svg";
+  const logoSrc = jobCompanyLogo(job);
+  const company = jobCompanyName(job);
+  const website = job.recruiter?.companyWebsite;
 
   return (
     <div className="min-h-screen bg-[#F8F9FC] pb-20">
-      {/* Header Section */}
       <div className="bg-white border-b border-zinc-100 pt-32 pb-12">
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
             <div className="flex items-start gap-6">
-              <div className="w-20 h-20 md:w-24 md:h-24 relative shrink-0 bg-white rounded-lg border border-zinc-100 p-2 shadow-sm">
+              <div className="w-20 h-20 md:w-24 md:h-24 relative shrink-0 bg-white rounded-xl border border-zinc-100 p-2 shadow-sm">
                 <Image
                   src={logoSrc}
-                  alt={job.companyName || "Company name"}
+                  alt={company}
                   fill
-                  className="object-cover rounded-lg"
+                  className="object-contain rounded-lg"
+                  unoptimized={logoSrc.startsWith("http")}
                 />
               </div>
               <div className="space-y-3">
                 <div className="flex flex-wrap items-center gap-3">
                   <h1 className="text-3xl md:text-4xl font-bold font-clash text-[#2D2D2D]">
-                    {job.title}
+                    {job.title ?? "Role"}
                   </h1>
                   <span className="px-4 py-1.5 text-xs font-bold font-epilogue rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100 uppercase tracking-wider">
-                    {job.jobType?.replace("_", " ")}
+                    {formatJobType(job.jobType)}
                   </span>
                 </div>
                 <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[#515B6F] font-epilogue">
                   <span className="font-semibold text-zinc-900 text-lg">
-                    {job.companyName}
+                    {company}
                   </span>
                   <span className="hidden md:inline text-zinc-300">•</span>
                   <div className="flex items-center gap-2">
                     <MapPin size={18} className="text-indigo-600" />
-                    <span>{job.location || job.district}</span>
+                    <span>{job.location || job.district || "Flexible"}</span>
                   </div>
                   <span className="hidden md:inline text-zinc-300">•</span>
                   <div className="flex items-center gap-2">
                     <Clock size={18} className="text-indigo-600" />
-                    <span>{job.employmentType?.replace("_", " ")}</span>
+                    <span>{formatEmploymentType(job.employmentType)}</span>
                   </div>
                 </div>
               </div>
@@ -105,9 +113,9 @@ const JobDetailsPage = () => {
             <div className="flex items-center gap-4">
               <Button
                 onClick={() => setIsApplyModalOpen(true)}
-                className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold font-epilogue px-6 py-6 text-lg shadow-xl shadow-indigo-500/20 w-full md:w-auto cursor-pointer"
+                className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold font-epilogue px-6 py-6 text-lg shadow-xl shadow-indigo-500/20 w-full md:w-auto cursor-pointer rounded-xl"
               >
-                Apply Now
+                Apply now
               </Button>
             </div>
           </div>
@@ -116,19 +124,16 @@ const JobDetailsPage = () => {
 
       <div className="container mx-auto px-4 md:px-6 mt-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          {/* Main Content */}
           <div className="lg:col-span-2 space-y-12">
-            {/* Description */}
             <section className="space-y-4">
               <h2 className="text-2xl font-bold font-clash text-[#2D2D2D]">
                 Description
               </h2>
               <p className="text-[#515B6F] font-epilogue leading-relaxed text-lg whitespace-pre-line">
-                {job.description}
+                {job.description || "No description provided."}
               </p>
             </section>
 
-            {/* Responsibilities */}
             {job.responsibilities && job.responsibilities.length > 0 && (
               <section className="space-y-4">
                 <h2 className="text-2xl font-bold font-clash text-[#2D2D2D]">
@@ -151,15 +156,14 @@ const JobDetailsPage = () => {
               </section>
             )}
 
-            {/* Requirements */}
-            {job.additionalReqirements &&
-              job.additionalReqirements.length > 0 && (
+            {job.additionalRequirements &&
+              job.additionalRequirements.length > 0 && (
                 <section className="space-y-4">
                   <h2 className="text-2xl font-bold font-clash text-[#2D2D2D]">
-                    Requirement
+                    Requirements
                   </h2>
                   <ul className="space-y-3">
-                    {job.additionalReqirements.map((item, index) => (
+                    {job.additionalRequirements.map((item, index) => (
                       <li
                         key={index}
                         className="flex gap-3 text-[#515B6F] font-epilogue text-lg leading-relaxed"
@@ -175,17 +179,16 @@ const JobDetailsPage = () => {
                 </section>
               )}
 
-            {/* Skills */}
             {job.requiredSkills && job.requiredSkills.length > 0 && (
               <section className="space-y-4">
                 <h2 className="text-2xl font-bold font-clash text-[#2D2D2D]">
-                  Required Skills
+                  Required skills
                 </h2>
                 <div className="flex flex-wrap gap-3">
                   {job.requiredSkills.map((skill, index) => (
                     <span
                       key={index}
-                      className="px-6 py-2 bg-white border border-zinc-200 text-[#4640DE] font-semibold font-epilogue rounded-lg shadow-sm"
+                      className="px-6 py-2 bg-white border border-zinc-200 text-[#4640DE] font-semibold font-epilogue rounded-xl shadow-sm"
                     >
                       {skill}
                     </span>
@@ -194,11 +197,10 @@ const JobDetailsPage = () => {
               </section>
             )}
 
-            {/* Benefits */}
             {job.benefits && job.benefits.length > 0 && (
               <section className="space-y-4">
                 <h2 className="text-2xl font-bold font-clash text-[#2D2D2D]">
-                  Nice-to-Haves
+                  Benefits
                 </h2>
                 <ul className="space-y-3">
                   {job.benefits.map((item, index) => (
@@ -218,12 +220,10 @@ const JobDetailsPage = () => {
             )}
           </div>
 
-          {/* Sidebar */}
           <div className="space-y-8">
-            {/* Job Summary Card */}
             <div className="bg-white border border-zinc-100 p-8 rounded-2xl shadow-sm space-y-8">
               <h3 className="text-xl font-bold font-clash text-[#2D2D2D]">
-                Job Summary
+                Job summary
               </h3>
 
               <div className="grid grid-cols-1 gap-6">
@@ -240,7 +240,7 @@ const JobDetailsPage = () => {
                 <SummaryItem
                   icon={<Users className="text-indigo-600" />}
                   label="Vacancy"
-                  value={job.vacancy ? `${job.vacancy} Positions` : "N/A"}
+                  value={job.vacancy ? `${job.vacancy} open` : "N/A"}
                 />
                 <SummaryItem
                   icon={<GraduationCap className="text-indigo-600" />}
@@ -249,65 +249,93 @@ const JobDetailsPage = () => {
                 />
                 <SummaryItem
                   icon={<Clock className="text-indigo-600" />}
-                  label="Job Type"
-                  value={job.jobType?.replace("_", " ")}
+                  label="Employment"
+                  value={formatEmploymentType(job.employmentType)}
                 />
                 <SummaryItem
                   icon={<Calendar className="text-indigo-600" />}
                   label="Deadline"
-                  value={job.deadline ? new Date(job.deadline).toLocaleDateString("en-US", {
-                    month: "long",
-                    day: "numeric",
-                    year: "numeric",
-                  }) : "N/A"}
+                  value={
+                    job.deadline
+                      ? new Date(job.deadline).toLocaleDateString("en-US", {
+                          month: "long",
+                          day: "numeric",
+                          year: "numeric",
+                        })
+                      : "N/A"
+                  }
                 />
               </div>
 
-              <div className="pt-6 border-t border-zinc-100">
+              <div className="pt-6 border-t border-zinc-100 space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0">
-                    <span className="font-bold text-lg">
-                      {job.category?.title?.[0]}
-                    </span>
+                  <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0 font-bold text-lg">
+                    {(job.industry?.name || "?").charAt(0)}
                   </div>
                   <div>
                     <p className="text-xs text-zinc-500 font-epilogue">
-                      Category
+                      Industry
                     </p>
                     <p className="font-bold text-[#2D2D2D] font-epilogue">
-                      {job.category?.title}
+                      {job.industry?.name ?? "—"}
                     </p>
                   </div>
                 </div>
+                {job.subIndustry?.name && (
+                  <div className="flex items-center gap-3 pl-1">
+                    <div className="w-10 h-10 rounded-lg bg-zinc-50 flex items-center justify-center text-zinc-500 shrink-0 text-sm font-bold">
+                      {job.subIndustry.name.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="text-xs text-zinc-500 font-epilogue">
+                        Sub-industry
+                      </p>
+                      <p className="font-semibold text-[#2D2D2D] font-epilogue">
+                        {job.subIndustry.name}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Company Info Card */}
             <div className="bg-white border border-zinc-100 p-8 rounded-2xl shadow-sm space-y-6">
               <div className="flex items-center gap-4">
                 <div className="w-14 h-14 relative shrink-0">
                   <Image
                     src={logoSrc}
-                    alt={job.companyName || "Company logo"}
+                    alt={company}
                     fill
                     className="object-contain"
+                    unoptimized={logoSrc.startsWith("http")}
                   />
                 </div>
                 <div>
                   <h4 className="font-bold text-[#2D2D2D] font-epilogue text-lg">
-                    {job.companyName || "N/A"}
+                    {company}
                   </h4>
-                  <Link
-                    href={`/companies/${(job.companyName || "unknown").toLowerCase().replace(/\s+/g, "-")}`}
-                    className="text-indigo-600 text-sm font-semibold hover:underline"
-                  >
-                    View profile
-                  </Link>
+                  {website && (
+                    <a
+                      href={
+                        website.startsWith("http")
+                          ? website
+                          : `https://${website}`
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-indigo-600 text-sm font-semibold hover:underline inline-flex items-center gap-1 mt-1"
+                    >
+                      Company website
+                      <ExternalLink size={14} />
+                    </a>
+                  )}
                 </div>
               </div>
-              <p className="text-[#515B6F] font-epilogue text-sm leading-relaxed">
-                {job.companyDetails}
-              </p>
+              {job.recruiter?.companyAddress && (
+                <p className="text-[#515B6F] font-epilogue text-sm leading-relaxed">
+                  {job.recruiter.companyAddress}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -317,7 +345,7 @@ const JobDetailsPage = () => {
         isOpen={isApplyModalOpen}
         onClose={() => setIsApplyModalOpen(false)}
         jobId={job.id}
-        jobTitle={job.title}
+        jobTitle={job.title ?? "this role"}
       />
     </div>
   );

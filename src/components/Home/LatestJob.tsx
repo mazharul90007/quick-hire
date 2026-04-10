@@ -18,7 +18,7 @@ const LatestJobs = () => {
             <div className="h-12 w-64 bg-zinc-100 animate-pulse rounded-lg" />
             <div className="h-6 w-32 bg-zinc-100 animate-pulse rounded-lg" />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {[...Array(8)].map((_, i) => (
               <div
                 key={i}
@@ -58,7 +58,7 @@ const LatestJobs = () => {
         </div>
 
         {/* Jobs Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {jobs?.map((job: Job) => (
             <LatestJobCard key={job.id} job={job} />
           ))}

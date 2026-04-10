@@ -7,14 +7,15 @@ import {
   Briefcase,
   Layers,
   Users,
-  ChevronLeft,
-  Menu,
   Home,
   LogOut,
-  X
+  X,
+  ClipboardList,
+  Settings,
+  ExternalLink,
+  GraduationCap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 import { authClient } from "@/lib/auth-client";
 
 interface SidebarProps {
@@ -24,12 +25,16 @@ interface SidebarProps {
 
 const DashboardSidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
   const pathname = usePathname();
+  const { data: session } = authClient.useSession();
 
   const navItems = [
     { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Manage Jobs", href: "/dashboard/jobs", icon: Briefcase },
-    { name: "Manage Categories", href: "/dashboard/categories", icon: Layers },
-    { name: "Manage Users", href: "/dashboard/users", icon: Users },
+    { name: "Jobs", href: "/dashboard/jobs", icon: Briefcase },
+    { name: "Applications", href: "/dashboard/applications", icon: ClipboardList },
+    { name: "Industries", href: "/dashboard/categories", icon: Layers },
+    { name: "Courses", href: "/dashboard/courses", icon: GraduationCap },
+    { name: "Users", href: "/dashboard/users", icon: Users },
+    { name: "Settings", href: "/dashboard/settings", icon: Settings },
   ];
 
   const handleLogout = async () => {
@@ -39,54 +44,64 @@ const DashboardSidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
 
   return (
     <>
-      {/* Backdrop for Mobile */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300"
+          className="fixed inset-0 z-40 bg-zinc-900/25 backdrop-blur-[2px] transition-opacity lg:hidden"
           onClick={() => setIsOpen(false)}
+          aria-hidden
         />
       )}
 
-
-      {/* Sidebar Container */}
       <aside
         className={cn(
-          "fixed top-0 left-0 bottom-0 z-50 bg-[#202430] text-white transition-all duration-300 ease-in-out overflow-y-auto",
-          isOpen ? "w-72 translate-x-0" : "w-0 -translate-x-full lg:w-0",
+          "fixed top-0 left-0 bottom-0 z-50 flex w-72 flex-col border-r border-zinc-200 bg-white shadow-sm transition-transform duration-300 ease-out",
+          "lg:translate-x-0",
+          isOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
-        <div className="p-8 flex flex-col h-full">
-          {/* Brand & Close Button */}
-          <div className="flex items-center justify-between mb-12">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center p-2">
-                <Image
-                  src="/assets/images/brand-logo.svg"
-                  alt="QuickHire"
-                  width={32}
-                  height={32}
-                  className="object-contain"
+        <div className="relative flex h-full flex-col p-6">
+          <div className="mb-10 flex items-center justify-between">
+            <Link
+              href="/dashboard"
+              className="group flex items-center gap-3"
+              onClick={() => {
+                if (window.innerWidth < 1024) setIsOpen(false);
+              }}
+            >
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200 bg-zinc-50">
+                <img
+                  src="/assets/images/quick-hire-images/quick_hire_logo.png"
+                  alt=""
+                  className="h-6 w-6 object-contain"
                 />
               </div>
-              <span className="text-2xl font-bold font-clash tracking-tight">
-                QuickHire
-              </span>
-            </div>
-
-            {/* Close Button (Mobile Only) */}
+              <div>
+                <span className="font-clash block text-lg font-bold tracking-tight text-zinc-900">
+                  QuickHire
+                </span>
+                <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
+                  Admin
+                </span>
+              </div>
+            </Link>
             <button
+              type="button"
               onClick={() => setIsOpen(false)}
-              className="lg:hidden p-2 text-zinc-400 hover:text-white transition-colors"
-              aria-label="Close Sidebar"
+              className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 lg:hidden"
+              aria-label="Close menu"
             >
-              <X size={24} />
+              <X size={22} />
             </button>
           </div>
 
-          {/* Navigation */}
-          <nav className="flex-1 space-y-2">
+          <nav className="flex-1 space-y-0.5 overflow-y-auto">
+            <p className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
+              Menu
+            </p>
             {navItems.map((item) => {
-              const isActive = pathname === item.href;
+              const active =
+                pathname === item.href ||
+                (item.href !== "/dashboard" && pathname.startsWith(item.href));
               return (
                 <Link
                   key={item.name}
@@ -95,19 +110,17 @@ const DashboardSidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
                     if (window.innerWidth < 1024) setIsOpen(false);
                   }}
                   className={cn(
-                    "flex items-center gap-4 px-4 py-4 font-epilogue font-bold text-sm transition-all group",
-                    isActive
-                      ? "bg-[#4640DE] text-white shadow-lg shadow-[#4640DE]/20"
-                      : "text-zinc-400 hover:text-white hover:bg-zinc-800",
+                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold font-epilogue transition-colors",
+                    active
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900",
                   )}
                 >
                   <item.icon
                     size={20}
                     className={cn(
-                      "transition-colors",
-                      isActive
-                        ? "text-white"
-                        : "text-zinc-500 group-hover:text-white",
+                      "shrink-0",
+                      active ? "text-primary-foreground" : "text-zinc-400",
                     )}
                   />
                   {item.name}
@@ -116,23 +129,43 @@ const DashboardSidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
             })}
           </nav>
 
-          {/* Footer Actions */}
-          <div className="pt-8 mt-8 border-t border-zinc-800 space-y-2">
+          <div className="mt-6 space-y-1 border-t border-zinc-200 pt-6">
+            <Link
+              href="/jobs"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-zinc-600 transition-colors font-epilogue hover:bg-zinc-100 hover:text-zinc-900"
+            >
+              <ExternalLink size={18} className="text-zinc-400" />
+              Live job board
+            </Link>
             <Link
               href="/"
-              className="flex items-center gap-4 px-4 py-3 font-epilogue font-bold text-sm text-zinc-400 hover:text-white transition-all"
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-zinc-600 transition-colors font-epilogue hover:bg-zinc-100 hover:text-zinc-900"
             >
-              <Home size={20} />
-              Back to Home
+              <Home size={18} className="text-zinc-400" />
+              Marketing site
             </Link>
             <button
+              type="button"
               onClick={handleLogout}
-              className="w-full flex items-center gap-4 px-4 py-3 font-epilogue font-bold text-sm text-red-400 hover:bg-red-500/10 transition-all rounded-none"
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-rose-600 transition-colors font-epilogue hover:bg-rose-50"
             >
-              <LogOut size={20} />
-              Sign Out
+              <LogOut size={18} />
+              Sign out
             </button>
           </div>
+
+          {session?.user && (
+            <div className="mt-4 rounded-lg border border-zinc-200 bg-zinc-50 p-3">
+              <p className="truncate font-epilogue text-xs text-zinc-500">
+                Signed in
+              </p>
+              <p className="truncate font-epilogue text-sm font-semibold text-zinc-900">
+                {session.user.name || session.user.email}
+              </p>
+            </div>
+          )}
         </div>
       </aside>
     </>

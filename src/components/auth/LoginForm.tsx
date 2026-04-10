@@ -4,9 +4,20 @@ import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, Mail, Lock, KeyRound, User, ShieldCheck } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  Mail,
+  Lock,
+  KeyRound,
+  User,
+  Building2,
+  ShieldCheck,
+  Loader2,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,6 +26,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { getPostLoginDashboardPath } from "@/lib/postLoginPath";
 
 export const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -30,12 +42,18 @@ export const LoginForm = () => {
     setError("");
 
     try {
-      await authClient.signIn.email({
+      const res = await authClient.signIn.email({
         email,
         password,
         callbackURL: "/",
       });
-      router.push("/");
+      if (res && typeof res === "object" && "error" in res && res.error) {
+        setError(String(res.error.message || "Invalid email or password."));
+        return;
+      }
+      const next = await getPostLoginDashboardPath();
+      router.push(next);
+      router.refresh();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.message || "Something went wrong. Please try again.");
@@ -45,166 +63,147 @@ export const LoginForm = () => {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      <div className="bg-white border border-zinc-100 p-8 md:p-10 shadow-xl rounded-xl shadow-zinc-200/50 font-epilogue">
-        <div className="text-center mb-10 relative px-10">
-          <div className="absolute right-0 top-0">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="rounded-full border-zinc-200 hover:border-[#4640DE] hover:text-[#4640DE] transition-all cursor-pointer h-10 w-10"
-                  title="Test Credentials"
-                >
-                  <KeyRound size={20} />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 font-epilogue rounded-xl border-zinc-100 shadow-2xl p-2">
-                <DropdownMenuLabel className="text-xs font-bold text-zinc-400 uppercase tracking-widest px-2 py-2">
-                  Test Credentials
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator className="bg-zinc-50" />
-                <DropdownMenuItem
-                  onClick={() => {
-                    setEmail("user@gmail.com");
-                    setPassword("pass123456");
-                  }}
-                  className="flex items-center gap-3 py-3 px-3 cursor-pointer rounded-lg hover:bg-zinc-50 focus:bg-zinc-50 transition-colors group"
-                >
-                  <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-100 transition-colors">
-                    <User size={16} />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-sm font-bold text-zinc-900 leading-none">User Account</span>
-                    <span className="text-[10px] text-zinc-500 mt-1">user@gmail.com</span>
-                  </div>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    setEmail("admin@gmail.com");
-                    setPassword("pass123456");
-                  }}
-                  className="flex items-center gap-3 py-3 px-3 cursor-pointer rounded-lg hover:bg-zinc-50 focus:bg-zinc-50 transition-colors group"
-                >
-                  <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-100 transition-colors">
-                    <ShieldCheck size={16} />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-sm font-bold text-zinc-900 leading-none">Admin Account</span>
-                    <span className="text-[10px] text-zinc-500 mt-1">admin@gmail.com</span>
-                  </div>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+    <div className="rounded-2xl border border-white/60 bg-white/85 backdrop-blur-xl shadow-[0_24px_80px_-24px_oklch(0.35_0.08_260/0.35)] p-6 sm:p-8 font-epilogue relative">
+      <div className="absolute right-4 top-4 sm:right-6 sm:top-6">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-full h-9 w-9 border-border"
+              title="Demo credentials"
+            >
+              <KeyRound className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56 rounded-xl">
+            <DropdownMenuLabel className="text-xs uppercase tracking-wider text-muted-foreground">
+              Demo fill
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => {
+                setEmail("user@gmail.com");
+                setPassword("pass123456");
+              }}
+              className="gap-2 cursor-pointer"
+            >
+              <User className="h-4 w-4 text-primary" />
+              <span className="text-sm font-semibold">Applicant</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                setEmail("recruiter@gmail.com");
+                setPassword("pass123456");
+              }}
+              className="gap-2 cursor-pointer"
+            >
+              <Building2 className="h-4 w-4 text-sky-600" />
+              <span className="text-sm font-semibold">Recruiter</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                setEmail("admin@gmail.com");
+                setPassword("pass123456");
+              }}
+              className="gap-2 cursor-pointer"
+            >
+              <ShieldCheck className="h-4 w-4 text-emerald-600" />
+              <span className="text-sm font-semibold">Admin</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
+      <div className="text-center mb-8 pr-10">
+        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight font-clash text-foreground">
+          Welcome back
+        </h1>
+        <p className="text-muted-foreground mt-2 text-sm sm:text-base">
+          Sign in to manage applications and job posts.
+        </p>
+      </div>
+
+      <form className="space-y-5" onSubmit={handleLogin}>
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <div className="relative">
+            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              id="email"
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="pl-10 h-11 bg-white/80"
+              placeholder="you@company.com"
+            />
           </div>
-          <h1 className="text-4xl font-bold tracking-tight text-[#2D2D2D] font-clash mb-3">
-            Welcome Back
-          </h1>
-          <p className="text-[#515B6F] font-medium">
-            Enter your credentials to access your account
-          </p>
         </div>
 
-        <form className="space-y-6" onSubmit={handleLogin}>
-          <div className="space-y-5">
-            <div className="space-y-2">
-              <label
-                htmlFor="email"
-                className="text-sm font-bold text-[#202430]"
-              >
-                Email Address
-              </label>
-              <div className="relative group">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-[#4640DE] transition-colors">
-                  <Mail size={18} />
-                </div>
-                <Input
-                  id="email"
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-11 h-12 rounded-none border-zinc-200 focus:border-[#4640DE] focus:ring-1 focus:ring-[#4640DE] transition-all placeholder:text-zinc-300"
-                  placeholder="Enter your email"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <label
-                  htmlFor="password"
-                  className="text-sm font-bold text-[#202430]"
-                >
-                  Password
-                </label>
-                <Link
-                  href="#"
-                  className="text-xs font-bold text-[#4640DE] hover:underline"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-              <div className="relative group">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-[#4640DE] transition-colors">
-                  <Lock size={18} />
-                </div>
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pl-11 pr-11 h-12 rounded-none border-zinc-200 focus:border-[#4640DE] focus:ring-1 focus:ring-[#4640DE] transition-all placeholder:text-zinc-300"
-                  placeholder="Enter your password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-[#4640DE] transition-colors"
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
-            </div>
+        <div className="space-y-2">
+          <div className="flex justify-between items-center gap-2">
+            <Label htmlFor="password">Password</Label>
+            <Link
+              href="/forgot-password"
+              className="text-xs font-bold text-primary hover:underline"
+            >
+              Forgot password?
+            </Link>
           </div>
+          <div className="relative">
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="pl-10 pr-10 h-11 bg-white/80"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              aria-label="Toggle password"
+            >
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
+            </button>
+          </div>
+        </div>
 
-          {error && (
-            <div className="bg-red-50 border border-red-100 p-3 flex items-center gap-3 text-red-600 text-sm font-medium">
-              <div className="w-1.5 h-1.5 rounded-full bg-red-600 shrink-0" />
-              {error}
-            </div>
+        {error ? (
+          <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+            {error}
+          </div>
+        ) : null}
+
+        <Button
+          type="submit"
+          disabled={loading}
+          className="w-full h-12 font-bold rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Signing in…
+            </>
+          ) : (
+            "Sign in"
           )}
+        </Button>
 
-          <Button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-[#4640DE] h-14 text-base font-bold text-white hover:bg-[#3b36c0] rounded-none shadow-lg shadow-[#4640DE]/20 transition-all disabled:opacity-70"
-          >
-            {loading ? (
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                <span>Authenticating...</span>
-              </div>
-            ) : (
-              "Login"
-            )}
-          </Button>
-
-          <div className="text-center pt-2">
-            <p className="text-[#515B6F] font-medium text-sm">
-              Do not have an account?{" "}
-              <Link
-                href="/signup"
-                className="font-bold text-[#4640DE] hover:underline transition-all"
-              >
-                Sign Up Now
-              </Link>
-            </p>
-          </div>
-        </form>
-      </div>
+        <p className="text-center text-sm text-muted-foreground pt-2">
+          New here?{" "}
+          <Link href="/signup" className="font-bold text-primary hover:underline">
+            Create an account
+          </Link>
+        </p>
+      </form>
     </div>
   );
 };
