@@ -302,10 +302,12 @@ export interface CourseCatalogItem {
 /** Admin list row: full course + creator + purchase count. */
 export interface CourseAdminRow extends CourseCatalogItem {
   isPublished: boolean;
-  createdByUserId: string;
+  /** FK to `admin.id` (staff profile that created the course). */
+  createdByAdminId: string;
   updatedAt: string;
   stripeProductId: string | null;
   stripePriceId: string | null;
+  /** Admin profile id + login email/name for display. */
   createdBy: { id: string; email: string; name: string | null };
   _count: { purchases: number };
 }
