@@ -38,6 +38,10 @@ const jobSchema = z
     district: z.string().optional(),
     salary: z.string().min(1, "Salary range is required"),
     vacancy: z.number().min(1, "Vacancy must be at least 1"),
+    age: z.string().max(200).optional(),
+    experience: z.string().max(500).optional(),
+    /** One requirement per line; sent to API as string[] */
+    education: z.string().max(8000).optional(),
     jobType: z.enum(["REMOTE", "ONSITE", "HYBRID"]),
     employmentType: z.enum([
       "FULL_TIME",
@@ -112,6 +116,14 @@ export default function CreateJobModal({
       district: data.district || undefined,
       salary: data.salary,
       vacancy: data.vacancy,
+      age: data.age?.trim() || undefined,
+      experience: data.experience?.trim() || undefined,
+      education: data.education
+        ? data.education
+            .split("\n")
+            .map((s) => s.trim())
+            .filter(Boolean)
+        : undefined,
       jobType: data.jobType,
       employmentType: data.employmentType,
       description: data.description,
@@ -319,6 +331,54 @@ export default function CreateJobModal({
                 />
                 {errors.vacancy && (
                   <p className="text-xs text-red-500">{errors.vacancy.message}</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <h3 className="text-lg font-bold font-clash text-[#2D2D2D] border-b border-zinc-200 pb-2">
+              Candidate requirements
+            </h3>
+            <p className="text-sm text-[#515B6F] font-epilogue -mt-2">
+              Optional details shown to applicants (age range, experience, education
+              requirements).
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="age">Age</Label>
+                <Input
+                  id="age"
+                  placeholder="e.g. 25–35 years"
+                  {...register("age")}
+                  className="h-12 rounded-xl border-zinc-200"
+                />
+                {errors.age && (
+                  <p className="text-xs text-red-500">{errors.age.message}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="experience">Experience</Label>
+                <Input
+                  id="experience"
+                  placeholder="e.g. 3+ years in backend"
+                  {...register("experience")}
+                  className="h-12 rounded-xl border-zinc-200"
+                />
+                {errors.experience && (
+                  <p className="text-xs text-red-500">{errors.experience.message}</p>
+                )}
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="education">Education requirements (one per line)</Label>
+                <Textarea
+                  id="education"
+                  placeholder={"B.Sc in Computer Science\nMBA preferred\nDiploma in a related field"}
+                  {...register("education")}
+                  className="min-h-[100px] rounded-xl border-zinc-200 font-epilogue"
+                />
+                {errors.education && (
+                  <p className="text-xs text-red-500">{errors.education.message}</p>
                 )}
               </div>
             </div>

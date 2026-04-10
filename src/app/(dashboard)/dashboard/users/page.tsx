@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { authClient } from "@/lib/auth-client";
 import {
@@ -144,11 +145,19 @@ function StatusBadge({ status, deleted }: { status: string; deleted: boolean }) 
 
 export default function ManageUsersPage() {
   const { data: session } = authClient.useSession();
+  const searchParams = useSearchParams();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const actorRole = String((session?.user as any)?.role ?? "");
   const actorUserId = session?.user?.id ?? "";
 
   const [tab, setTab] = useState<UserTab>("applicants");
+
+  useEffect(() => {
+    const t = searchParams.get("tab");
+    if (t === "applicants" || t === "recruiters" || t === "staff") {
+      setTab(t);
+    }
+  }, [searchParams]);
   const [page, setPage] = useState(1);
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");

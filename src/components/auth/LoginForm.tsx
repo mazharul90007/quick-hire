@@ -83,7 +83,7 @@ export const LoginForm = () => {
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => {
-                setEmail("user@gmail.com");
+                setEmail("applicant@gmail.com");
                 setPassword("pass123456");
               }}
               className="gap-2 cursor-pointer"

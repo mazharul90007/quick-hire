@@ -1,8 +1,6 @@
 "use client";
 
-import {
-  ArrowRight,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import Heading from "../shared/Heading";
@@ -19,7 +17,7 @@ const CategorySection = () => {
             <div className="h-12 w-64 bg-zinc-100 animate-pulse rounded-lg" />
             <div className="h-6 w-32 bg-zinc-100 animate-pulse rounded-lg" />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[...Array(8)].map((_, i) => (
               <div
                 key={i}
@@ -56,7 +54,7 @@ const CategorySection = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4">
           {industries.map((industry) => {
             const jobCount = industry._count?.jobs ?? 0;
             const logoSrc = industry.logo || "/assets/images/no-image.svg";
@@ -96,7 +94,8 @@ const CategorySection = () => {
                       {industry.name}
                     </h3>
                     <p className="text-sm leading-relaxed text-[#848a99] font-epilogue">
-                      Explore open positions and specializations in this industry.
+                      Explore open positions and specializations in this
+                      industry.
                     </p>
                   </div>
 

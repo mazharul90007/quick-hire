@@ -37,6 +37,9 @@ const jobSchema = z.object({
   district: z.string().optional(),
   salary: z.string().min(1, "Salary range is required"),
   vacancy: z.number().min(1, "Vacancy must be at least 1"),
+  age: z.string().max(200).optional(),
+  experience: z.string().max(500).optional(),
+  education: z.string().max(8000).optional(),
   jobType: z.enum(["REMOTE", "ONSITE", "HYBRID"]),
   employmentType: z.enum([
     "FULL_TIME",
@@ -101,6 +104,9 @@ export default function UpdateJobModal({ isOpen, onClose, job }: UpdateJobModalP
       district: job.district ?? "",
       salary: job.salary ?? "",
       vacancy: job.vacancy ?? 1,
+      age: job.age ?? "",
+      experience: job.experience ?? "",
+      education: (job.education ?? []).join("\n"),
       jobType: job.jobType,
       employmentType: job.employmentType,
       description: job.description ?? "",
@@ -110,7 +116,7 @@ export default function UpdateJobModal({ isOpen, onClose, job }: UpdateJobModalP
       benefits: (job.benefits ?? []).join("\n"),
       tags: (job.tags ?? []).join(", "),
       deadline: toDateInputValue(job.deadline),
-      status: job.status,
+      status: job.status ?? "ACTIVE",
     });
   }, [job, isOpen, reset]);
 
@@ -136,6 +142,14 @@ export default function UpdateJobModal({ isOpen, onClose, job }: UpdateJobModalP
       district: data.district || undefined,
       salary: data.salary,
       vacancy: data.vacancy,
+      age: data.age?.trim() || undefined,
+      experience: data.experience?.trim() || undefined,
+      education: data.education
+        ? data.education
+            .split("\n")
+            .map((s) => s.trim())
+            .filter(Boolean)
+        : [],
       jobType: data.jobType,
       employmentType: data.employmentType,
       description: data.description,
@@ -248,6 +262,29 @@ export default function UpdateJobModal({ isOpen, onClose, job }: UpdateJobModalP
               <Label htmlFor="vacancy">Openings</Label>
               <Input id="vacancy" type="number" {...register("vacancy", { valueAsNumber: true })} />
               {errors.vacancy && <p className="text-xs text-red-500">{errors.vacancy.message}</p>}
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <p className="text-sm font-semibold text-[#2D2D2D] font-clash">Candidate requirements (optional)</p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="age">Age</Label>
+              <Input id="age" placeholder="e.g. 25–35 years" {...register("age")} />
+              {errors.age && <p className="text-xs text-red-500">{errors.age.message}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="experience">Experience</Label>
+              <Input id="experience" placeholder="e.g. 3+ years" {...register("experience")} />
+              {errors.experience && <p className="text-xs text-red-500">{errors.experience.message}</p>}
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="education">Education requirements (one per line)</Label>
+              <Textarea
+                id="education"
+                placeholder={"B.Sc in CSE\nMBA preferred"}
+                {...register("education")}
+                className="min-h-[100px]"
+              />
+              {errors.education && <p className="text-xs text-red-500">{errors.education.message}</p>}
             </div>
             <div className="space-y-2">
               <Label>Job type</Label>

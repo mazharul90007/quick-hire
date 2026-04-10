@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
+  BadgeCheck,
   Briefcase,
   Building2,
   ClipboardList,
@@ -12,14 +13,17 @@ import {
   Layers,
   MapPin,
   MoreVertical,
+  ShieldAlert,
   Star,
   TrendingUp,
+  Users,
 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { useGetAllJobs } from "@/hooks/useJob";
 import { useGetApplications } from "@/hooks/useApplication";
 import { useGetIndustries } from "@/hooks/useIndustry";
 import { AdminStatCard } from "@/components/dashboard/AdminStatCard";
+import { useAdminApplicants, useAdminRecruiters } from "@/hooks/useAdmin";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -98,6 +102,24 @@ export default function DashboardOverviewPage() {
     status: "ACTIVE",
     featured: true,
   });
+  const { data: verifiedJobsMeta, isLoading: verifiedJobsLoading } =
+    useGetAllJobs({
+      limit: 1,
+      page: 1,
+      allStatuses: true,
+      isVerified: true,
+    });
+  const { data: pendingJobsMeta, isLoading: pendingJobsLoading } =
+    useGetAllJobs({
+      limit: 1,
+      page: 1,
+      allStatuses: true,
+      isVerified: false,
+    });
+  const { data: applicantsCountRes, isLoading: applicantsCountLoading } =
+    useAdminApplicants({ page: 1, limit: 1 });
+  const { data: recruitersCountRes, isLoading: recruitersCountLoading } =
+    useAdminRecruiters({ page: 1, limit: 1 });
   const { data: recentJobsRes, isLoading: jobsLoading } = useGetAllJobs({
     limit: 5,
     sortBy: "createdAt",
@@ -112,6 +134,10 @@ export default function DashboardOverviewPage() {
   const totalJobs = allJobsMeta?.meta?.total ?? 0;
   const activeJobs = activeJobsMeta?.meta?.total ?? 0;
   const featuredJobs = featuredJobsMeta?.meta?.total ?? 0;
+  const verifiedJobs = verifiedJobsMeta?.meta?.total ?? 0;
+  const pendingJobs = pendingJobsMeta?.meta?.total ?? 0;
+  const totalApplicants = applicantsCountRes?.meta?.total ?? 0;
+  const totalRecruiters = recruitersCountRes?.meta?.total ?? 0;
   const totalApps = appsTotalRes?.meta?.total ?? 0;
   const industryCount = industries.length;
 
@@ -172,38 +198,85 @@ export default function DashboardOverviewPage() {
         </div>
       </header>
 
-      <section className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <AdminStatCard
-          label="Total jobs"
-          value={jobsLoading ? "—" : totalJobs}
-          hint="All statuses in database"
-          icon={Briefcase}
-          href="/dashboard/jobs"
-          accent="indigo"
-        />
-        <AdminStatCard
-          label="Active listings"
-          value={jobsLoading ? "—" : activeJobs}
-          hint="Visible on public board"
-          icon={TrendingUp}
-          href="/jobs"
-          accent="emerald"
-        />
-        <AdminStatCard
-          label="Applications"
-          value={appsLoading ? "—" : totalApps}
-          hint="Submissions (all roles scoped on API)"
-          icon={ClipboardList}
-          href="/dashboard/applications"
-          accent="violet"
-        />
-        <AdminStatCard
-          label="Featured active"
-          value={jobsLoading ? "—" : featuredJobs}
-          hint="Promoted & active jobs"
-          icon={Star}
-          accent="amber"
-        />
+      <section className="space-y-8">
+        <div>
+          <h2 className="mb-3 font-clash text-lg font-bold text-zinc-900">
+            Verification & people
+          </h2>
+          <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <AdminStatCard
+              label="Verified jobs"
+              value={verifiedJobsLoading ? "—" : verifiedJobs}
+              hint="Moderation approved (all statuses)"
+              icon={BadgeCheck}
+              href="/dashboard/jobs"
+              accent="emerald"
+            />
+            <AdminStatCard
+              label="Pending verification"
+              value={pendingJobsLoading ? "—" : pendingJobs}
+              hint="Awaiting admin review"
+              icon={ShieldAlert}
+              href="/dashboard/jobs"
+              accent="rose"
+            />
+            <AdminStatCard
+              label="Registered applicants"
+              value={applicantsCountLoading ? "—" : totalApplicants}
+              hint="Applicant profiles in the system"
+              icon={Users}
+              href="/dashboard/users?tab=applicants"
+              accent="violet"
+            />
+            <AdminStatCard
+              label="Recruiters"
+              value={recruitersCountLoading ? "—" : totalRecruiters}
+              hint="Companies with recruiter accounts"
+              icon={Building2}
+              href="/dashboard/users?tab=recruiters"
+              accent="cyan"
+            />
+          </div>
+        </div>
+
+        <div>
+          <h2 className="mb-3 font-clash text-lg font-bold text-zinc-900">
+            Jobs & activity
+          </h2>
+          <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <AdminStatCard
+              label="Total jobs"
+              value={jobsLoading ? "—" : totalJobs}
+              hint="All statuses in database"
+              icon={Briefcase}
+              href="/dashboard/jobs"
+              accent="indigo"
+            />
+            <AdminStatCard
+              label="Active listings"
+              value={jobsLoading ? "—" : activeJobs}
+              hint="Visible on public job board"
+              icon={TrendingUp}
+              href="/jobs"
+              accent="sky"
+            />
+            <AdminStatCard
+              label="Application submissions"
+              value={appsLoading ? "—" : totalApps}
+              hint="Total apply events (role-scoped on API)"
+              icon={ClipboardList}
+              href="/dashboard/applications"
+              accent="slate"
+            />
+            <AdminStatCard
+              label="Featured active"
+              value={jobsLoading ? "—" : featuredJobs}
+              hint="Promoted & active jobs"
+              icon={Star}
+              accent="amber"
+            />
+          </div>
+        </div>
       </section>
 
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">

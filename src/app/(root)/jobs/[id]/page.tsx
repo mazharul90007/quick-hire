@@ -14,6 +14,7 @@ import {
   CheckCircle2,
   ArrowLeft,
   ExternalLink,
+  UserRound,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -179,6 +180,28 @@ const JobDetailsPage = () => {
                 </section>
               )}
 
+            {job.education && job.education.length > 0 && (
+              <section className="space-y-4">
+                <h2 className="text-2xl font-bold font-clash text-[#2D2D2D]">
+                  Education requirements
+                </h2>
+                <ul className="space-y-3">
+                  {job.education.map((item, index) => (
+                    <li
+                      key={index}
+                      className="flex gap-3 text-[#515B6F] font-epilogue text-lg leading-relaxed"
+                    >
+                      <GraduationCap
+                        size={20}
+                        className="text-indigo-600 shrink-0 mt-1"
+                      />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
             {job.requiredSkills && job.requiredSkills.length > 0 && (
               <section className="space-y-4">
                 <h2 className="text-2xl font-bold font-clash text-[#2D2D2D]">
@@ -230,12 +253,7 @@ const JobDetailsPage = () => {
                 <SummaryItem
                   icon={<DollarSign className="text-indigo-600" />}
                   label="Salary"
-                  value={job.salary || "Negotiable"}
-                />
-                <SummaryItem
-                  icon={<Briefcase className="text-indigo-600" />}
-                  label="Experience"
-                  value={job.experience || "N/A"}
+                  value={job.salary?.trim() || "Negotiable"}
                 />
                 <SummaryItem
                   icon={<Users className="text-indigo-600" />}
@@ -243,9 +261,14 @@ const JobDetailsPage = () => {
                   value={job.vacancy ? `${job.vacancy} open` : "N/A"}
                 />
                 <SummaryItem
-                  icon={<GraduationCap className="text-indigo-600" />}
-                  label="Education"
-                  value={job.education || "N/A"}
+                  icon={<UserRound className="text-indigo-600" />}
+                  label="Age"
+                  value={job.age?.trim() || "Not specified"}
+                />
+                <SummaryItem
+                  icon={<Briefcase className="text-indigo-600" />}
+                  label="Experience"
+                  value={job.experience?.trim() || "Not specified"}
                 />
                 <SummaryItem
                   icon={<Clock className="text-indigo-600" />}

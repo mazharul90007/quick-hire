@@ -58,7 +58,7 @@ const LatestJobs = () => {
         </div>
 
         {/* Jobs Grid */}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
           {jobs?.map((job: Job) => (
             <LatestJobCard key={job.id} job={job} />
           ))}

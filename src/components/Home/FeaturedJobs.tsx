@@ -71,7 +71,7 @@ const FeaturedJobs = () => {
         </div>
 
         {/* Jobs Grid */}
-        <div className="flex overflow-x-auto pb-6 gap-0 scroll-smooth snap-x snap-mandatory lg:grid lg:grid-cols-4 lg:gap-0 lg:pb-0 hide-scrollbar items-stretch">
+        <div className="flex overflow-x-auto pb-6 gap-2 scroll-smooth snap-x snap-mandatory lg:grid lg:grid-cols-2 lg:gap-2 lg:pb-0 hide-scrollbar items-stretch">
           {jobs.map((job: Job) => (
             <div
               key={job.id}

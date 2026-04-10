@@ -42,7 +42,7 @@ export interface Job {
   age?: string | null;
   salary?: string | null;
   experience?: string | null;
-  education?: string | null;
+  education?: string[];
   additionalRequirements?: string[];
   responsibilities?: string[];
   requiredSkills?: string[];
@@ -96,6 +96,8 @@ export interface JobFilters {
   location?: string;
   district?: string;
   featured?: boolean | string;
+  /** Admin: filter by moderation flag (all statuses when paired with `allStatuses`). */
+  isVerified?: boolean | string;
   recruiterId?: string;
   page?: number;
   limit?: number;
