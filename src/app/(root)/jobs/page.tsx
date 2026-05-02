@@ -2,12 +2,13 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useGetAllJobs } from "@/hooks/useJob";
+import { useGetAllJobs, useSmartSearch } from "@/hooks/useJob";
 import { useGetIndustries } from "@/hooks/useIndustry";
 import JobSearchHeader from "@/components/Jobs/JobSearchHeader";
 import JobFilterSidebar from "@/components/Jobs/JobFilterSidebar";
 import JobListItem from "@/components/Jobs/JobListItem";
 import JobGridCard from "@/components/Jobs/JobGridCard";
+import AiSearchResponse from "@/components/Jobs/AiSearchResponse";
 import { JobFilters, Job } from "@/types";
 import {
   ChevronLeft,
@@ -16,6 +17,7 @@ import {
   LayoutGrid,
   List,
   Search,
+  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -37,9 +39,13 @@ const JobsPageContent = () => {
   });
 
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
+  const [isAiMode, setIsAiMode] = useState(false);
 
-  const { data: jobResponse, isLoading } = useGetAllJobs(filters);
+  const { data: jobResponse, isLoading: isStandardLoading } = useGetAllJobs(filters, { enabled: !isAiMode });
+  const { data: aiResponse, isLoading: isAiLoading } = useSmartSearch(filters.searchTerm || "", { enabled: isAiMode && !!filters.searchTerm });
   const { data: industries = [] } = useGetIndustries();
+
+  const isLoading = isAiMode ? isAiLoading : isStandardLoading;
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -58,7 +64,8 @@ const JobsPageContent = () => {
     router.replace(`/jobs?${params.toString()}`, { scroll: false });
   }, [filters, router]);
 
-  const handleSearch = (searchTerm: string, district: string) => {
+  const handleSearch = (searchTerm: string, district: string, aiModeSelected: boolean) => {
+    setIsAiMode(aiModeSelected);
     setFilters((prev) => ({ ...prev, searchTerm, district, page: 1 }));
   };
 
@@ -104,13 +111,13 @@ const JobsPageContent = () => {
     filters.district
   );
 
-  const jobs = jobResponse?.data || [];
-  const meta = jobResponse?.meta;
-  const totalResults = meta?.total || 0;
+  const jobs = isAiMode ? (aiResponse?.jobs || []) : (jobResponse?.data || []);
+  const meta = isAiMode ? null : jobResponse?.meta;
+  const totalResults = meta?.total || (isAiMode ? jobs.length : 0);
   const totalPages = meta ? Math.ceil(meta.total / meta.limit) : 0;
 
-  const startResult = meta ? (meta.page - 1) * meta.limit + 1 : 0;
-  const endResult = meta ? Math.min(meta.page * meta.limit, meta.total) : 0;
+  const startResult = meta ? (meta.page - 1) * meta.limit + 1 : (jobs.length > 0 ? 1 : 0);
+  const endResult = meta ? Math.min(meta.page * meta.limit, meta.total) : jobs.length;
 
   const industrySelection =
     filters.industryId?.split(",").filter(Boolean) || [];
@@ -215,16 +222,45 @@ const JobsPageContent = () => {
                 </button>
               </div>
             </div>
+            
+            {isAiMode && aiResponse?.aiMessage && (
+               <AiSearchResponse message={aiResponse.aiMessage} />
+            )}
 
             {isLoading ? (
-              <div className="space-y-4">
-                {[...Array(5)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="h-40 bg-zinc-50 animate-pulse rounded-xl border border-zinc-100"
-                  />
-                ))}
-              </div>
+              isAiMode ? (
+                <div className="flex flex-col items-center justify-center py-24 space-y-8 bg-white/40 backdrop-blur-sm rounded-3xl border-2 border-dashed border-purple-200 animate-in fade-in zoom-in duration-500 shadow-xl shadow-purple-500/5">
+                  <div className="relative">
+                    <div className="w-24 h-24 border-4 border-purple-100 border-t-purple-600 rounded-full animate-spin shadow-lg shadow-purple-500/20" />
+                    <Sparkles 
+                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-purple-600 animate-pulse" 
+                      size={40} 
+                    />
+                  </div>
+                  <div className="text-center space-y-3 max-w-md px-6">
+                    <h3 className="text-2xl font-bold font-clash text-[#2D2D2D] bg-gradient-to-r from-[#4640DE] to-purple-600 bg-clip-text text-transparent">
+                      AI is finding your dream job...
+                    </h3>
+                    <p className="text-[#515B6F] font-epilogue leading-relaxed">
+                      Our AI is currently analyzing all available positions to find the <span className="font-bold text-purple-600">perfect match</span> for your profile. Please wait a moment.
+                    </p>
+                    <div className="flex justify-center gap-1">
+                      <div className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce [animation-delay:-0.3s]" />
+                      <div className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-bounce [animation-delay:-0.15s]" />
+                      <div className="w-1.5 h-1.5 bg-purple-600 rounded-full animate-bounce" />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {[...Array(5)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="h-40 bg-zinc-50 animate-pulse rounded-xl border border-zinc-100"
+                    />
+                  ))}
+                </div>
+              )
             ) : jobs.length > 0 ? (
               <div
                 className={`grid gap-6 ${viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 xl:grid-cols-3" : "grid-cols-1"}`}

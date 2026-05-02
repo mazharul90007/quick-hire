@@ -24,6 +24,7 @@
 
 ### 👤 Applicant
 
+- **AI Match**: **Natural language job search** using RAG (Retrieval-Augmented Generation). Describe your dream role and get AI-summarized job matches.
 - **Job discovery**: Listing and detail pages with filters (e.g. title, location, type).
 - **Featured jobs** on the home experience.
 - **Apply**: Authenticated apply flow with CV (PDF) and note; aligns with application APIs.

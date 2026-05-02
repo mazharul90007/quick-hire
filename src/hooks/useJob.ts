@@ -90,3 +90,14 @@ export const useGetSingleJob = (id: string) => {
     enabled: !!id,
   });
 };
+
+export const useSmartSearch = (query: string, options?: { enabled?: boolean }) => {
+  return useQuery({
+    queryKey: ["smart-search", query],
+    queryFn: async () => {
+      const response = await jobApi.smartSearch(query);
+      return response.data;
+    },
+    enabled: options?.enabled ?? false,
+  });
+};

@@ -12,8 +12,10 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 
+import { Sparkles } from "lucide-react";
+
 interface JobSearchHeaderProps {
-    onSearch: (searchTerm: string, district: string) => void;
+    onSearch: (searchTerm: string, district: string, isAiMode: boolean) => void;
     initialSearchTerm?: string;
     initialDistrict?: string;
 }
@@ -21,10 +23,11 @@ interface JobSearchHeaderProps {
 const JobSearchHeader = ({ onSearch, initialSearchTerm = "", initialDistrict = "" }: JobSearchHeaderProps) => {
     const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
     const [district, setDistrict] = useState(initialDistrict);
+    const [isAiMode, setIsAiMode] = useState(false);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onSearch(searchTerm, district);
+        onSearch(searchTerm, district, isAiMode);
     };
 
     return (
@@ -40,38 +43,79 @@ const JobSearchHeader = ({ onSearch, initialSearchTerm = "", initialDistrict = "
                         </p>
                     </div>
 
+                    <div className="flex items-center justify-center gap-4 mb-4">
+                        <button
+                            type="button"
+                            onClick={() => setIsAiMode(false)}
+                            className={`px-6 py-2 rounded-full font-semibold transition-all ${!isAiMode ? 'bg-[#4640DE] text-white shadow-md' : 'bg-white text-zinc-500 hover:bg-zinc-50'}`}
+                        >
+                            Standard Search
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setIsAiMode(true)}
+                            className={`flex items-center gap-2 px-6 py-2 rounded-full font-semibold transition-all ${isAiMode ? 'bg-gradient-to-r from-[#4640DE] to-purple-500 text-white shadow-md' : 'bg-white text-zinc-500 hover:bg-zinc-50'}`}
+                        >
+                            <Sparkles size={18} className={isAiMode ? 'text-white' : 'text-[#4640DE]'} />
+                            AI Match
+                        </button>
+                    </div>
+
+                    {isAiMode && (
+                        <div className="flex items-center justify-center gap-2 mb-2 text-purple-600 font-bold text-sm animate-in fade-in slide-in-from-bottom-2">
+                            <Sparkles size={16} className="animate-pulse" />
+                            AI SEARCH ACTIVE: Describe your dream role and get the top 5 closest matches!
+                        </div>
+                    )}
+
                     <form
                         onSubmit={handleSubmit}
-                        className="bg-white p-2 shadow-xl shadow-zinc-200/50 flex flex-col md:flex-row items-center gap-2 group focus-within:ring-2 focus-within:ring-[#4640DE]/20 transition-all"
+                        className="bg-white p-2 shadow-xl shadow-zinc-200/50 flex flex-col md:flex-row items-center gap-2 group focus-within:ring-2 focus-within:ring-[#4640DE]/20 transition-all rounded-xl md:rounded-none"
                     >
-                        <div className="flex items-center gap-3 px-4 py-2 grow w-full border-b md:border-b-0 md:border-r border-zinc-100">
-                            <Search className="text-[#4640DE]" size={24} />
-                            <input
-                                type="text"
-                                placeholder="Job title or keyword"
-                                className="w-full bg-transparent outline-none font-epilogue text-[#2D2D2D] py-2"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
-                        </div>
-                        <div className="flex items-center gap-3 px-4 py-2 grow w-full">
-                            <MapPin className="text-[#4640DE]" size={24} />
-                            <Select onValueChange={(value) => setDistrict(value)} value={district}>
-                                <SelectTrigger className="w-full bg-transparent border-none focus:ring-0 px-0 h-auto font-epilogue text-[#2D2D2D] py-2 cursor-pointer shadow-none">
-                                    <SelectValue placeholder="Location (District)" />
-                                </SelectTrigger>
-                                <SelectContent className="max-h-60 rounded-xl border-zinc-100 shadow-2xl">
-                                    {districts.map((districtItem) => (
-                                        <SelectItem key={districtItem} value={districtItem} className="font-epilogue">
-                                            {districtItem}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
+                        {!isAiMode ? (
+                            <>
+                                <div className="flex items-center gap-3 px-4 py-2 grow w-full border-b md:border-b-0 md:border-r border-zinc-100">
+                                    <Search className="text-[#4640DE]" size={24} />
+                                    <input
+                                        type="text"
+                                        placeholder="Job title or keyword"
+                                        className="w-full bg-transparent outline-none font-epilogue text-[#2D2D2D] py-2"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                </div>
+                                <div className="flex items-center gap-3 px-4 py-2 grow w-full">
+                                    <MapPin className="text-[#4640DE]" size={24} />
+                                    <Select onValueChange={(value) => setDistrict(value)} value={district}>
+                                        <SelectTrigger className="w-full bg-transparent border-none focus:ring-0 px-0 h-auto font-epilogue text-[#2D2D2D] py-2 cursor-pointer shadow-none">
+                                            <SelectValue placeholder="Location (District)" />
+                                        </SelectTrigger>
+                                        <SelectContent className="max-h-60 rounded-xl border-zinc-100 shadow-2xl">
+                                            {districts.map((districtItem) => (
+                                                <SelectItem key={districtItem} value={districtItem} className="font-epilogue">
+                                                    {districtItem}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="flex items-center gap-3 px-4 py-2 grow w-full">
+                                <Sparkles className="text-purple-500" size={24} />
+                                <input
+                                    type="text"
+                                    placeholder="Describe your ideal job (e.g., Remote React role with good benefits)"
+                                    className="w-full bg-transparent outline-none font-epilogue text-[#2D2D2D] py-2"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                            </div>
+                        )}
+                        
                         <Button
                             type="submit"
-                            className="bg-[#4640DE] hover:bg-[#3b36c0] text-white px-10 py-7 font-bold font-epilogue text-lg w-full md:w-auto rounded-none transition-all shadow-lg shadow-[#4640DE]/20"
+                            className={`text-white px-10 py-7 font-bold font-epilogue text-lg w-full md:w-auto rounded-xl md:rounded-none transition-all shadow-lg ${isAiMode ? 'bg-purple-500 hover:bg-purple-600 shadow-purple-500/20' : 'bg-[#4640DE] hover:bg-[#3b36c0] shadow-[#4640DE]/20'}`}
                         >
                             Search
                         </Button>

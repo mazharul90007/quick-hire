@@ -117,6 +117,12 @@ export const jobApi = {
     const response = await api.get<ApiResponse<Job>>(`/jobs/${id}`);
     return response.data;
   },
+  smartSearch: async (q: string) => {
+    const response = await api.get<ApiResponse<{ aiMessage: string, jobs: Job[] }>>("/jobs/ai-search", {
+      params: { q }
+    });
+    return response.data;
+  },
 };
 
 // ============== Applications ==============
