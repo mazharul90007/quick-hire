@@ -24,13 +24,13 @@
 
 ### 👤 Applicant
 
-- **AI Match**: **Natural language job search** using RAG (Retrieval-Augmented Generation). Describe your dream role and get AI-summarized job matches.
+- **AI Match**: **Natural language job search** using a professional RAG (Retrieval-Augmented Generation) engine. Describe your dream role and get AI-curated job matches with natural language summaries.
 - **Job discovery**: Listing and detail pages with filters (e.g. title, location, type).
 - **Featured jobs** on the home experience.
 - **Apply**: Authenticated apply flow with CV (PDF) and note; aligns with application APIs.
 - **Profile**: Applicant profile and assets (backed by Cloudinary on the server).
 - **Courses**: Public catalog, **Stripe Checkout** via server session (redirect), purchase history, success/cancel pages, receipt download when the API returns a PDF.
-- **Auth**: Better Auth (email/password), session-aware navigation; email verification and password reset are handled by the backend mailer.
+- **Auth**: Better Auth (email/password), **Google Login**, session-aware navigation; email verification and password reset are handled by the backend mailer.
 
 ### 🏢 Recruiter
 

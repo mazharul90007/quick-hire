@@ -18,6 +18,7 @@ import {
   ShieldCheck,
   Loader2,
 } from "lucide-react";
+import { FcGoogle } from "react-icons/fc";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -59,6 +60,17 @@ export const LoginForm = () => {
       setError(err.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: window.location.origin,
+      });
+    } catch (err: any) {
+      setError(err.message || "Failed to sign in with Google");
     }
   };
 
@@ -197,7 +209,26 @@ export const LoginForm = () => {
           )}
         </Button>
 
-        <p className="text-center text-sm text-muted-foreground pt-2">
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t border-zinc-200"></span>
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-white px-2 text-muted-foreground font-semibold">Or continue with</span>
+          </div>
+        </div>
+
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleGoogleLogin}
+          className="w-full h-12 font-bold rounded-xl border-zinc-200 hover:bg-zinc-50 flex items-center justify-center gap-3 transition-all"
+        >
+          <FcGoogle size={24} />
+          <span>Sign in with Google</span>
+        </Button>
+
+        <p className="text-center text-sm text-muted-foreground pt-4">
           New here?{" "}
           <Link href="/signup" className="font-bold text-primary hover:underline">
             Create an account
