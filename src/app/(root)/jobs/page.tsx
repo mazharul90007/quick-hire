@@ -209,14 +209,14 @@ const JobsPageContent = () => {
                 <button
                   type="button"
                   onClick={() => setViewMode("grid")}
-                  className={`p-2 rounded-lg transition-all ${viewMode === "grid" ? "bg-[#4640DE] text-white shadow-md" : "text-zinc-400 hover:text-zinc-600"}`}
+                  className={`p-2 rounded-lg transition-all ${viewMode === "grid" ? "bg-primary text-white shadow-md" : "text-zinc-400 hover:text-zinc-600"}`}
                 >
                   <LayoutGrid size={20} />
                 </button>
                 <button
                   type="button"
                   onClick={() => setViewMode("list")}
-                  className={`p-2 rounded-lg transition-all ${viewMode === "list" ? "bg-[#4640DE] text-white shadow-md" : "text-zinc-400 hover:text-zinc-600"}`}
+                  className={`p-2 rounded-lg transition-all ${viewMode === "list" ? "bg-primary text-white shadow-md" : "text-zinc-400 hover:text-zinc-600"}`}
                 >
                   <List size={20} />
                 </button>
@@ -229,25 +229,25 @@ const JobsPageContent = () => {
 
             {isLoading ? (
               isAiMode ? (
-                <div className="flex flex-col items-center justify-center py-24 space-y-8 bg-white/40 backdrop-blur-sm rounded-3xl border-2 border-dashed border-purple-200 animate-in fade-in zoom-in duration-500 shadow-xl shadow-purple-500/5">
+                <div className="flex flex-col items-center justify-center py-24 space-y-8 bg-white/40 backdrop-blur-sm rounded-3xl border-2 border-dashed border-primary/20 animate-in fade-in zoom-in duration-500 shadow-xl shadow-primary/5">
                   <div className="relative">
-                    <div className="w-24 h-24 border-4 border-purple-100 border-t-purple-600 rounded-full animate-spin shadow-lg shadow-purple-500/20" />
+                    <div className="w-24 h-24 border-4 border-primary/10 border-t-primary rounded-full animate-spin shadow-lg shadow-primary/20" />
                     <Sparkles 
-                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-purple-600 animate-pulse" 
+                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-primary animate-pulse" 
                       size={40} 
                     />
                   </div>
                   <div className="text-center space-y-3 max-w-md px-6">
-                    <h3 className="text-2xl font-bold font-clash text-[#2D2D2D] bg-gradient-to-r from-[#4640DE] to-purple-600 bg-clip-text text-transparent">
+                    <h3 className="text-2xl font-bold font-clash text-foreground bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
                       AI is finding your dream job...
                     </h3>
-                    <p className="text-[#515B6F] font-epilogue leading-relaxed">
-                      Our AI is currently analyzing all available positions to find the <span className="font-bold text-purple-600">perfect match</span> for your profile. Please wait a moment.
+                    <p className="text-muted-foreground font-epilogue leading-relaxed">
+                      Our AI is currently analyzing all available positions to find the <span className="font-bold text-primary">perfect match</span> for your profile. Please wait a moment.
                     </p>
                     <div className="flex justify-center gap-1">
-                      <div className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce [animation-delay:-0.3s]" />
-                      <div className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-bounce [animation-delay:-0.15s]" />
-                      <div className="w-1.5 h-1.5 bg-purple-600 rounded-full animate-bounce" />
+                      <div className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-bounce [animation-delay:-0.3s]" />
+                      <div className="w-1.5 h-1.5 bg-primary/60 rounded-full animate-bounce [animation-delay:-0.15s]" />
+                      <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" />
                     </div>
                   </div>
                 </div>
@@ -276,8 +276,8 @@ const JobsPageContent = () => {
             ) : (
               <div className="text-center py-20 border-2 border-dashed border-zinc-200 rounded-2xl bg-white/80">
                 <div className="max-w-xs mx-auto space-y-4">
-                  <div className="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mx-auto">
-                    <Search size={32} className="text-[#4640DE]" />
+                  <div className="w-16 h-16 bg-primary/5 rounded-full flex items-center justify-center mx-auto">
+                    <Search size={32} className="text-primary" />
                   </div>
                   <h3 className="text-xl font-bold font-clash text-[#2D2D2D]">
                     No jobs found
@@ -288,7 +288,7 @@ const JobsPageContent = () => {
                   </p>
                   <Button
                     variant="link"
-                    className="text-[#4640DE] font-bold"
+                    className="text-primary font-bold"
                     onClick={handleClearFilters}
                   >
                     Clear all filters
@@ -324,8 +324,8 @@ const JobsPageContent = () => {
                           }
                           className={`w-10 h-10 rounded-xl font-bold font-epilogue ${
                             filters.page === pageNum
-                              ? "bg-[#4640DE] hover:bg-[#3b36c0] text-white shadow-lg shadow-[#4640DE]/20"
-                              : "border-zinc-200 text-[#515B6F] hover:text-[#4640DE]"
+                              ? "bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20"
+                              : "border-zinc-200 text-muted-foreground hover:text-primary"
                           }`}
                           onClick={() => handlePageChange(pageNum)}
                           disabled={isLoading}
@@ -360,7 +360,7 @@ const JobsPage = () => {
     <Suspense
       fallback={
         <div className="min-h-screen bg-white pt-20 flex items-center justify-center">
-          <div className="w-12 h-12 border-4 border-[#4640DE] border-t-transparent rounded-full animate-spin" />
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
         </div>
       }
     >

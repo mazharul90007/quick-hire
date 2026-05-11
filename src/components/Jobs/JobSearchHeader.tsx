@@ -54,7 +54,7 @@ const JobSearchHeader = ({ onSearch, initialSearchTerm = "", initialDistrict = "
                         <button
                             type="button"
                             onClick={() => setIsAiMode(true)}
-                            className={`flex items-center gap-2 px-6 py-2 rounded-full font-semibold transition-all ${isAiMode ? 'bg-linear-to-r from-primary to-secondary text-white shadow-md' : 'bg-card text-muted-foreground hover:bg-muted/50 border border-border/50'}`}
+                            className={`flex items-center gap-2 px-6 py-2 rounded-full font-semibold transition-all ${isAiMode ? 'bg-primary text-white shadow-md' : 'bg-card text-muted-foreground hover:bg-muted/50 border border-border/50'}`}
                         >
                             <Sparkles size={18} className={isAiMode ? 'text-white' : 'text-primary'} />
                             AI Match
@@ -62,7 +62,7 @@ const JobSearchHeader = ({ onSearch, initialSearchTerm = "", initialDistrict = "
                     </div>
 
                     {isAiMode && (
-                        <div className="flex items-center justify-center gap-2 mb-2 text-secondary font-bold text-sm animate-in fade-in slide-in-from-bottom-2">
+                        <div className="flex items-center justify-center gap-2 mb-2 text-primary font-bold text-sm animate-in fade-in slide-in-from-bottom-2">
                             <Sparkles size={16} className="animate-pulse" />
                             AI SEARCH ACTIVE: Describe your dream role and get the top 5 closest matches!
                         </div>
@@ -102,7 +102,7 @@ const JobSearchHeader = ({ onSearch, initialSearchTerm = "", initialDistrict = "
                             </>
                         ) : (
                             <div className="flex items-center gap-3 px-4 py-2 grow w-full">
-                                <Sparkles className="text-secondary" size={24} />
+                                <Sparkles className="text-primary" size={24} />
                                 <input
                                     type="text"
                                     placeholder="Describe your ideal job (e.g., Remote React role with good benefits)"
@@ -115,7 +115,7 @@ const JobSearchHeader = ({ onSearch, initialSearchTerm = "", initialDistrict = "
                         
                         <Button
                             type="submit"
-                            className={`text-white px-10 py-7 font-bold font-epilogue text-lg w-full md:w-auto rounded-xl transition-all shadow-lg ${isAiMode ? 'bg-secondary hover:brightness-110 shadow-secondary/20' : 'bg-primary hover:brightness-110 shadow-primary/20'}`}
+                            className={`text-white px-10 py-7 font-bold font-epilogue text-lg w-full md:w-auto rounded-xl transition-all shadow-lg bg-primary hover:brightness-110 shadow-primary/20`}
                         >
                             Search
                         </Button>
