@@ -30,7 +30,8 @@
 - **Apply**: Authenticated apply flow with CV (PDF) and note; aligns with application APIs.
 - **Profile**: Applicant profile and assets (backed by Cloudinary on the server).
 - **Courses**: Public catalog, **Stripe Checkout** via server session (redirect), purchase history, success/cancel pages, receipt download when the API returns a PDF.
-- **Auth**: Better Auth (email/password), **Google Login**, session-aware navigation; email verification and password reset are handled by the backend mailer.
+- **Blogs**: Access to the latest industry insights and company news.
+- **Auth**: Better Auth (email/password), **Google Login**, session-aware navigation; **Improved quick-login UI** for demo roles.
 
 ### 🏢 Recruiter
 
@@ -45,6 +46,8 @@
 - **Applications**: Cross-cutting application views for moderation.
 - **Taxonomy**: Industry and sub-industry management.
 - **Courses**: CRUD for sellable courses (pricing, access duration, publish flag) against `/admin/courses`.
+- **Blogs**: Full content management system (CMS) for the platform's blog.
+- **Visual Analytics**: Interactive **Recharts-powered visualizations** (e.g. Jobs by Industry) for operational insights.
 
 ### 🌐 Public
 
@@ -57,6 +60,7 @@
 - **Framework**: [Next.js](https://nextjs.org/) (v16.1.6), App Router
 - **UI**: [React](https://react.dev/) 19, [Tailwind CSS v4](https://tailwindcss.com/), Radix UI, Shadcn-style components
 - **Data**: [TanStack Query](https://tanstack.com/query), [Axios](https://axios-http.com/) instance for REST
+- **Charts**: [Recharts](https://recharts.org/) for data visualization
 - **State**: [Zustand](https://github.com/pmndrs/zustand)
 - **Auth**: [Better Auth](https://www.better-auth.com/) client (`baseURL` derived from `NEXT_PUBLIC_API_URL`)
 - **Forms**: React Hook Form, [Zod](https://zod.dev/), `@hookform/resolvers`
