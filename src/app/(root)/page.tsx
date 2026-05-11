@@ -4,6 +4,8 @@ import HeroSection from "@/components/Home/HeroSection";
 import LatestJob from "@/components/Home/LatestJob";
 import PartnerCompany from "@/components/Home/PartnerCompany";
 import Poster from "@/components/Home/Poster";
+import BlogSection from "@/components/Home/BlogSection";
+import FaqSection from "@/components/Home/FaqSection";
 
 export default function Home() {
   return (
@@ -14,6 +16,8 @@ export default function Home() {
       <Poster />
       <FeaturedJobs />
       <LatestJob />
+      <BlogSection />
+      <FaqSection />
     </div>
   );
 }

@@ -14,6 +14,7 @@ import {
   Settings,
   ExternalLink,
   GraduationCap,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { authClient } from "@/lib/auth-client";
@@ -31,6 +32,7 @@ const DashboardSidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
     { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
     { name: "Jobs", href: "/dashboard/jobs", icon: Briefcase },
     { name: "Applications", href: "/dashboard/applications", icon: ClipboardList },
+    { name: "Blogs", href: "/dashboard/blogs", icon: FileText },
     { name: "Industries", href: "/dashboard/categories", icon: Layers },
     { name: "Courses", href: "/dashboard/courses", icon: GraduationCap },
     { name: "Users", href: "/dashboard/users", icon: Users },
@@ -54,7 +56,7 @@ const DashboardSidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
 
       <aside
         className={cn(
-          "fixed top-0 left-0 bottom-0 z-50 flex w-72 flex-col border-r border-zinc-200 bg-white shadow-sm transition-transform duration-300 ease-out",
+          "fixed top-0 left-0 bottom-0 z-50 flex w-72 flex-col border-r border-border/50 bg-card shadow-sm transition-transform duration-300 ease-out",
           "lg:translate-x-0",
           isOpen ? "translate-x-0" : "-translate-x-full",
         )}
@@ -68,7 +70,7 @@ const DashboardSidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
                 if (window.innerWidth < 1024) setIsOpen(false);
               }}
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200 bg-zinc-50">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-border/50 bg-muted/30">
                 <img
                   src="/assets/images/quick-hire-images/quick_hire_logo.png"
                   alt=""
@@ -76,10 +78,10 @@ const DashboardSidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
                 />
               </div>
               <div>
-                <span className="font-clash block text-lg font-bold tracking-tight text-zinc-900">
+                <span className="font-clash block text-lg font-bold tracking-tight text-foreground">
                   QuickHire
                 </span>
-                <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                   Admin
                 </span>
               </div>
@@ -87,7 +89,7 @@ const DashboardSidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 lg:hidden"
+              className="rounded-lg p-2 text-muted-foreground hover:bg-muted/50 hover:text-foreground lg:hidden"
               aria-label="Close menu"
             >
               <X size={22} />
@@ -95,7 +97,7 @@ const DashboardSidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
           </div>
 
           <nav className="flex-1 space-y-0.5 overflow-y-auto">
-            <p className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
+            <p className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/60">
               Menu
             </p>
             {navItems.map((item) => {
@@ -112,15 +114,15 @@ const DashboardSidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
                   className={cn(
                     "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold font-epilogue transition-colors",
                     active
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900",
+                       ? "bg-primary text-white shadow-md shadow-primary/20"
+                      : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
                   )}
                 >
                   <item.icon
                     size={20}
                     className={cn(
                       "shrink-0",
-                      active ? "text-primary-foreground" : "text-zinc-400",
+                      active ? "text-white" : "text-muted-foreground/60",
                     )}
                   />
                   {item.name}
@@ -129,27 +131,27 @@ const DashboardSidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
             })}
           </nav>
 
-          <div className="mt-6 space-y-1 border-t border-zinc-200 pt-6">
+          <div className="mt-6 space-y-1 border-t border-border/50 pt-6">
             <Link
               href="/jobs"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-zinc-600 transition-colors font-epilogue hover:bg-zinc-100 hover:text-zinc-900"
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-muted-foreground transition-colors font-epilogue hover:bg-muted/50 hover:text-foreground"
             >
-              <ExternalLink size={18} className="text-zinc-400" />
+              <ExternalLink size={18} className="text-muted-foreground/60" />
               Live job board
             </Link>
             <Link
               href="/"
-              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-zinc-600 transition-colors font-epilogue hover:bg-zinc-100 hover:text-zinc-900"
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-muted-foreground transition-colors font-epilogue hover:bg-muted/50 hover:text-foreground"
             >
-              <Home size={18} className="text-zinc-400" />
+              <Home size={18} className="text-muted-foreground/60" />
               Marketing site
             </Link>
             <button
               type="button"
               onClick={handleLogout}
-              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-rose-600 transition-colors font-epilogue hover:bg-rose-50"
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-destructive transition-colors font-epilogue hover:bg-destructive/5"
             >
               <LogOut size={18} />
               Sign out
@@ -157,11 +159,11 @@ const DashboardSidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
           </div>
 
           {session?.user && (
-            <div className="mt-4 rounded-lg border border-zinc-200 bg-zinc-50 p-3">
-              <p className="truncate font-epilogue text-xs text-zinc-500">
+            <div className="mt-4 rounded-lg border border-border/50 bg-muted/20 p-3">
+              <p className="truncate font-epilogue text-xs text-muted-foreground/60">
                 Signed in
               </p>
-              <p className="truncate font-epilogue text-sm font-semibold text-zinc-900">
+              <p className="truncate font-epilogue text-sm font-semibold text-foreground">
                 {session.user.name || session.user.email}
               </p>
             </div>

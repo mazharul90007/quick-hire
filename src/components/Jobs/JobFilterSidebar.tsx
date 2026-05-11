@@ -56,18 +56,18 @@ const JobFilterSidebar = ({
     <div className="space-y-8 sticky top-32">
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-xl font-bold font-clash text-[#2D2D2D]">Filters</h3>
+          <h3 className="text-xl font-bold font-clash text-foreground">Filters</h3>
           {isAnyFilterActive && (
             <button
               type="button"
               onClick={onClearFilters}
-              className="text-sm font-bold font-epilogue text-[#4640DE] hover:underline cursor-pointer"
+              className="text-sm font-bold font-epilogue text-primary hover:underline cursor-pointer"
             >
               Clear filters
             </button>
           )}
         </div>
-        <p className="text-sm text-[#515B6F] font-epilogue">
+        <p className="text-sm text-muted-foreground font-epilogue">
           Narrow roles by industry, work style, and contract type.
         </p>
       </div>
@@ -82,7 +82,7 @@ const JobFilterSidebar = ({
         ]}
       >
         <AccordionItem value="industries" className="border-none">
-          <AccordionTrigger className="text-lg font-bold font-clash text-[#2D2D2D] hover:no-underline py-4">
+          <AccordionTrigger className="text-lg font-bold font-clash text-foreground hover:no-underline py-4">
             Industries
           </AccordionTrigger>
           <AccordionContent className="space-y-3 pt-2 pb-6 max-h-64 overflow-y-auto pr-1">
@@ -101,11 +101,11 @@ const JobFilterSidebar = ({
                 <Checkbox
                   id={`ind-${ind.id}`}
                   checked={selectedIndustryIds.includes(ind.id)}
-                  className="w-5 h-5 rounded-none border-zinc-300 data-[state=checked]:bg-[#4640DE] data-[state=checked]:border-[#4640DE]"
+                  className="w-5 h-5 rounded-md border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                 />
                 <Label
                   htmlFor={`ind-${ind.id}`}
-                  className="text-base text-[#515B6F] font-epilogue cursor-pointer group-hover:text-[#4640DE] transition-colors"
+                  className="text-base text-muted-foreground font-epilogue cursor-pointer group-hover:text-primary transition-colors"
                 >
                   {ind.name}
                 </Label>
@@ -115,12 +115,12 @@ const JobFilterSidebar = ({
         </AccordionItem>
 
         <AccordionItem value="sub-industries" className="border-none">
-          <AccordionTrigger className="text-lg font-bold font-clash text-[#2D2D2D] hover:no-underline py-4">
+          <AccordionTrigger className="text-lg font-bold font-clash text-foreground hover:no-underline py-4">
             Sub-industries
           </AccordionTrigger>
           <AccordionContent className="space-y-3 pt-2 pb-6 max-h-72 overflow-y-auto pr-1">
             {flatSubIndustries.length === 0 ? (
-              <p className="text-sm text-zinc-400 font-epilogue">
+              <p className="text-sm text-muted-foreground/60 font-epilogue">
                 No sub-industries loaded.
               </p>
             ) : (
@@ -139,16 +139,16 @@ const JobFilterSidebar = ({
                   <Checkbox
                     id={`sub-${s.id}`}
                     checked={selectedSubIndustryIds.includes(s.id)}
-                    className="w-5 h-5 rounded-none border-zinc-300 data-[state=checked]:bg-[#4640DE] data-[state=checked]:border-[#4640DE]"
+                    className="w-5 h-5 rounded-md border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                   />
                   <Label
                     htmlFor={`sub-${s.id}`}
-                    className="text-sm text-[#515B6F] font-epilogue cursor-pointer group-hover:text-[#4640DE] transition-colors leading-snug"
+                    className="text-sm text-muted-foreground font-epilogue cursor-pointer group-hover:text-primary transition-colors leading-snug"
                   >
-                    <span className="text-zinc-400 font-medium">
+                    <span className="text-muted-foreground/60 font-medium">
                       {s.industryName}
                     </span>
-                    <span className="mx-1 text-zinc-300">·</span>
+                    <span className="mx-1 text-border">·</span>
                     {s.name}
                   </Label>
                 </div>
@@ -158,7 +158,7 @@ const JobFilterSidebar = ({
         </AccordionItem>
 
         <AccordionItem value="job-types" className="border-none">
-          <AccordionTrigger className="text-lg font-bold font-clash text-[#2D2D2D] hover:no-underline py-4">
+          <AccordionTrigger className="text-lg font-bold font-clash text-foreground hover:no-underline py-4">
             Job type
           </AccordionTrigger>
           <AccordionContent className="space-y-4 pt-2 pb-6">
@@ -177,11 +177,11 @@ const JobFilterSidebar = ({
                 <Checkbox
                   id={`type-${type.value}`}
                   checked={selectedJobTypes.includes(type.value)}
-                  className="w-5 h-5 rounded-none border-zinc-300 data-[state=checked]:bg-[#4640DE] data-[state=checked]:border-[#4640DE]"
+                  className="w-5 h-5 rounded-md border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                 />
                 <Label
                   htmlFor={`type-${type.value}`}
-                  className="text-base text-[#515B6F] font-epilogue cursor-pointer group-hover:text-[#4640DE] transition-colors"
+                  className="text-base text-muted-foreground font-epilogue cursor-pointer group-hover:text-primary transition-colors"
                 >
                   {type.label}
                 </Label>
@@ -191,7 +191,7 @@ const JobFilterSidebar = ({
         </AccordionItem>
 
         <AccordionItem value="employment-types" className="border-none">
-          <AccordionTrigger className="text-lg font-bold font-clash text-[#2D2D2D] hover:no-underline py-4">
+          <AccordionTrigger className="text-lg font-bold font-clash text-foreground hover:no-underline py-4">
             Employment type
           </AccordionTrigger>
           <AccordionContent className="space-y-4 pt-2 pb-6">
@@ -210,11 +210,11 @@ const JobFilterSidebar = ({
                 <Checkbox
                   id={`emp-${type.value}`}
                   checked={selectedEmploymentTypes.includes(type.value)}
-                  className="w-5 h-5 rounded-none border-zinc-300 data-[state=checked]:bg-[#4640DE] data-[state=checked]:border-[#4640DE]"
+                  className="w-5 h-5 rounded-md border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                 />
                 <Label
                   htmlFor={`emp-${type.value}`}
-                  className="text-base text-[#515B6F] font-epilogue cursor-pointer group-hover:text-[#4640DE] transition-colors"
+                  className="text-base text-muted-foreground font-epilogue cursor-pointer group-hover:text-primary transition-colors"
                 >
                   {type.label}
                 </Label>

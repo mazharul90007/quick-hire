@@ -25,6 +25,7 @@ import { useGetIndustries } from "@/hooks/useIndustry";
 import { AdminStatCard } from "@/components/dashboard/AdminStatCard";
 import { useAdminApplicants, useAdminRecruiters } from "@/hooks/useAdmin";
 import { Button } from "@/components/ui/button";
+import IndustryChart from "@/components/dashboard/IndustryChart";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -167,21 +168,21 @@ export default function DashboardOverviewPage() {
     <div className="space-y-10 max-w-7xl mx-auto">
       <header className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
         <div>
-          <p className="mb-2 font-epilogue text-sm font-semibold uppercase tracking-widest text-zinc-500">
+          <p className="mb-2 font-epilogue text-sm font-semibold uppercase tracking-widest text-muted-foreground">
             Control center
           </p>
-          <h1 className="font-clash text-4xl font-bold tracking-tight text-zinc-900 md:text-5xl">
+          <h1 className="font-clash text-4xl font-bold tracking-tight text-foreground md:text-5xl">
             Welcome back
             {session?.user?.name ? `, ${session.user.name.split(" ")[0]}` : ""}
           </h1>
-          <p className="mt-3 max-w-xl font-epilogue text-lg text-zinc-600">
+          <p className="mt-3 max-w-xl font-epilogue text-lg text-muted-foreground">
             Monitor listings, applications, and taxonomy from your live API.
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
           <Button
             asChild
-            className="rounded-xl bg-zinc-900 font-bold text-white hover:bg-zinc-800"
+            className="rounded-xl bg-primary font-bold text-white hover:brightness-110 shadow-lg shadow-primary/20"
           >
             <Link href="/dashboard/applications">
               Review applications
@@ -191,7 +192,7 @@ export default function DashboardOverviewPage() {
           <Button
             asChild
             variant="outline"
-            className="rounded-xl border-zinc-300 bg-white font-bold text-zinc-800 hover:bg-zinc-50"
+            className="rounded-xl border-border/50 bg-card/50 font-bold text-foreground hover:bg-muted/50 transition-all"
           >
             <Link href="/dashboard/jobs">Browse jobs</Link>
           </Button>
@@ -210,7 +211,7 @@ export default function DashboardOverviewPage() {
               hint="Moderation approved (all statuses)"
               icon={BadgeCheck}
               href="/dashboard/jobs"
-              accent="emerald"
+              accent="secondary"
             />
             <AdminStatCard
               label="Pending verification"
@@ -218,7 +219,7 @@ export default function DashboardOverviewPage() {
               hint="Awaiting admin review"
               icon={ShieldAlert}
               href="/dashboard/jobs"
-              accent="rose"
+              accent="muted"
             />
             <AdminStatCard
               label="Registered applicants"
@@ -226,7 +227,7 @@ export default function DashboardOverviewPage() {
               hint="Applicant profiles in the system"
               icon={Users}
               href="/dashboard/users?tab=applicants"
-              accent="violet"
+              accent="primary"
             />
             <AdminStatCard
               label="Recruiters"
@@ -234,7 +235,7 @@ export default function DashboardOverviewPage() {
               hint="Companies with recruiter accounts"
               icon={Building2}
               href="/dashboard/users?tab=recruiters"
-              accent="cyan"
+              accent="primary"
             />
           </div>
         </div>
@@ -250,7 +251,7 @@ export default function DashboardOverviewPage() {
               hint="All statuses in database"
               icon={Briefcase}
               href="/dashboard/jobs"
-              accent="indigo"
+              accent="primary"
             />
             <AdminStatCard
               label="Active listings"
@@ -258,7 +259,7 @@ export default function DashboardOverviewPage() {
               hint="Visible on public job board"
               icon={TrendingUp}
               href="/jobs"
-              accent="sky"
+              accent="secondary"
             />
             <AdminStatCard
               label="Application submissions"
@@ -266,28 +267,28 @@ export default function DashboardOverviewPage() {
               hint="Total apply events (role-scoped on API)"
               icon={ClipboardList}
               href="/dashboard/applications"
-              accent="slate"
+              accent="muted"
             />
             <AdminStatCard
               label="Featured active"
               value={jobsLoading ? "—" : featuredJobs}
               hint="Promoted & active jobs"
               icon={Star}
-              accent="amber"
+              accent="secondary"
             />
           </div>
         </div>
       </section>
 
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm md:p-8 lg:col-span-2">
+        <div className="rounded-2xl border border-border/50 bg-card p-6 shadow-sm md:p-8 lg:col-span-2">
           <div className="mb-6 flex items-center justify-between gap-4">
             <div>
-              <h2 className="flex items-center gap-2 font-clash text-xl font-bold text-zinc-900">
-                <Building2 className="h-5 w-5 text-zinc-600" />
+              <h2 className="flex items-center gap-2 font-clash text-xl font-bold text-foreground">
+                <Building2 className="h-5 w-5 text-primary" />
                 Jobs by industry
               </h2>
-              <p className="mt-1 font-epilogue text-sm text-zinc-500">
+              <p className="mt-1 font-epilogue text-sm text-muted-foreground">
                 Total jobs per industry (live counts from your database).
               </p>
             </div>
@@ -295,7 +296,7 @@ export default function DashboardOverviewPage() {
               asChild
               variant="outline"
               size="sm"
-              className="shrink-0 rounded-lg border-zinc-300 text-zinc-800 hover:bg-zinc-50"
+              className="shrink-0 rounded-lg border-border/50 text-foreground hover:bg-muted/50"
             >
               <Link href="/dashboard/categories">Manage</Link>
             </Button>
@@ -309,22 +310,27 @@ export default function DashboardOverviewPage() {
               No industries yet. Add some under taxonomy.
             </p>
           ) : (
-            <ul className="divide-y divide-dashed divide-zinc-200">
-              {industryJobRows.map((row) => (
+            <>
+              <div className="mb-10 pt-2 bg-muted/20 rounded-2xl p-4">
+                <IndustryChart data={industryJobRows} />
+              </div>
+              
+              <ul className="divide-y divide-dashed divide-zinc-200">
+                {industryJobRows.map((row) => (
                 <li key={row.id}>
                   <div className="grid grid-cols-1 items-center gap-2 py-4 sm:grid-cols-[minmax(0,1fr)_3.5rem_minmax(6rem,1.2fr)] sm:gap-4 md:py-5">
                     <span
-                      className="min-w-0 font-epilogue text-sm font-medium text-zinc-900 sm:text-base"
+                      className="min-w-0 font-epilogue text-sm font-semibold text-foreground sm:text-base"
                       title={row.name}
                     >
                       <span className="block truncate">{row.name}</span>
                     </span>
-                    <span className="font-epilogue text-sm tabular-nums text-zinc-800 sm:text-right">
+                    <span className="font-epilogue text-sm tabular-nums text-muted-foreground sm:text-right">
                       {row.count}
                     </span>
-                    <div className="h-3 w-full min-w-0 overflow-hidden rounded-full bg-zinc-100 sm:h-3.5">
+                    <div className="h-3 w-full min-w-0 overflow-hidden rounded-full bg-muted sm:h-3.5">
                       <div
-                        className="h-full rounded-full bg-[#4640DE] transition-[width] duration-500 ease-out"
+                        className="h-full rounded-full bg-primary transition-[width] duration-500 ease-out shadow-sm"
                         style={{ width: `${row.pct}%` }}
                         role="presentation"
                       />
@@ -333,6 +339,7 @@ export default function DashboardOverviewPage() {
                 </li>
               ))}
             </ul>
+          </>
           )}
         </div>
 
@@ -368,9 +375,9 @@ export default function DashboardOverviewPage() {
       </section>
 
       <section>
-        <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm">
-          <div className="flex items-center justify-between border-b border-zinc-100 px-5 py-4 sm:px-6">
-            <h2 className="font-clash text-lg font-bold tracking-tight text-zinc-900">
+        <div className="overflow-hidden rounded-xl border border-border/50 bg-card shadow-sm">
+          <div className="flex items-center justify-between border-b border-border/50 px-5 py-4 sm:px-6">
+            <h2 className="font-clash text-lg font-bold tracking-tight text-foreground">
               Latest Jobs
             </h2>
             <DropdownMenu>
@@ -379,17 +386,17 @@ export default function DashboardOverviewPage() {
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="h-9 w-9 shrink-0 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900"
+                  className="h-9 w-9 shrink-0 text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                   aria-label="More options"
                 >
                   <MoreVertical className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem asChild>
+              <DropdownMenuContent align="end" className="w-48 rounded-xl p-2 shadow-xl">
+                <DropdownMenuItem asChild className="rounded-lg font-semibold">
                   <Link href="/dashboard/jobs">View all jobs</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
+                <DropdownMenuItem asChild className="rounded-lg font-semibold">
                   <Link href="/jobs" target="_blank" rel="noreferrer">
                     Public job board
                   </Link>
@@ -429,10 +436,10 @@ export default function DashboardOverviewPage() {
                     href={`/jobs/${job.id}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="block rounded-xl border border-zinc-200 bg-white p-4 transition-colors hover:border-zinc-300 hover:bg-zinc-50/80 sm:p-5"
+                    className="block rounded-xl border border-border/50 bg-card/50 p-4 transition-all hover:border-primary/30 hover:bg-muted/30 sm:p-5"
                   >
                     <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-5">
-                      <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-zinc-100 bg-zinc-50">
+                      <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-border/50 bg-muted/30">
                         <Image
                           src={logoSrc}
                           alt={company}
@@ -447,13 +454,13 @@ export default function DashboardOverviewPage() {
                       </div>
 
                       <div className="min-w-0 flex-1">
-                        <p className="font-clash text-base font-bold leading-snug text-zinc-900 sm:text-lg">
+                        <p className="font-clash text-base font-bold leading-snug text-foreground sm:text-lg">
                           {job.title ?? "Untitled"}
                         </p>
-                        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 font-epilogue text-xs text-zinc-500 sm:text-sm">
+                        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 font-epilogue text-xs text-muted-foreground sm:text-sm">
                           <span className="inline-flex items-center gap-1.5">
                             <Briefcase
-                              className="h-3.5 w-3.5 shrink-0 text-zinc-400"
+                              className="h-3.5 w-3.5 shrink-0 text-primary"
                               aria-hidden
                             />
                             {formatEmploymentType(job.employmentType) ||
@@ -461,17 +468,17 @@ export default function DashboardOverviewPage() {
                           </span>
                           <span className="inline-flex items-center gap-1.5">
                             <Clock
-                              className="h-3.5 w-3.5 shrink-0 text-zinc-400"
+                              className="h-3.5 w-3.5 shrink-0 text-primary"
                               aria-hidden
                             />
                             {relativePosted(job.createdAt)}
                           </span>
                           <span className="inline-flex min-w-0 items-center gap-1.5">
                             <MapPin
-                              className="h-3.5 w-3.5 shrink-0 text-zinc-400"
+                              className="h-3.5 w-3.5 shrink-0 text-primary"
                               aria-hidden
                             />
-                            <span className="truncate">
+                            <span className="truncate text-foreground/80">
                               {jobLocationLine(job)}
                             </span>
                           </span>
@@ -483,7 +490,7 @@ export default function DashboardOverviewPage() {
                           {skills.map((tag) => (
                             <span
                               key={tag}
-                              className="rounded-md bg-[#4640DE]/10 px-2.5 py-1 font-epilogue text-[11px] font-semibold text-[#4640DE]"
+                              className="rounded-lg bg-primary/10 px-2.5 py-1 font-epilogue text-[11px] font-bold text-primary border border-primary/20"
                             >
                               {tag}
                             </span>
@@ -494,18 +501,18 @@ export default function DashboardOverviewPage() {
                       <div className="shrink-0 text-left lg:text-right">
                         {sal ? (
                           <>
-                            <span className="font-clash text-lg font-bold tabular-nums text-[#4640DE]">
+                            <span className="font-clash text-xl font-bold tabular-nums text-primary">
                               {salAmount}
                             </span>
                             {salSuffix ? (
-                              <span className="font-epilogue text-sm text-zinc-500">
+                              <span className="font-epilogue text-sm text-muted-foreground font-semibold">
                                 {" "}
                                 {salSuffix}
                               </span>
                             ) : null}
                           </>
                         ) : (
-                          <span className="font-epilogue text-sm text-zinc-400">
+                          <span className="font-epilogue text-sm text-muted-foreground italic font-medium">
                             Salary not listed
                           </span>
                         )}
@@ -519,20 +526,20 @@ export default function DashboardOverviewPage() {
         </div>
       </section>
 
-      <section className="rounded-2xl border border-zinc-200 bg-zinc-100/80 p-8 md:p-10">
+      <section className="rounded-2xl border border-border/50 bg-muted/20 p-8 md:p-10">
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
           <div>
-            <h2 className="font-clash text-2xl font-bold text-zinc-900">
+            <h2 className="font-clash text-2xl font-bold text-foreground">
               Need to add a sector?
             </h2>
-            <p className="mt-2 max-w-lg font-epilogue text-zinc-600">
+            <p className="mt-2 max-w-lg font-epilogue text-muted-foreground">
               Create industries and sub-industries so recruiters can classify
               new posts. Changes apply immediately to job board filters.
             </p>
           </div>
           <Button
             asChild
-            className="h-12 shrink-0 rounded-xl bg-zinc-900 px-8 font-bold text-white hover:bg-zinc-800"
+            className="h-12 shrink-0 rounded-xl bg-primary px-8 font-bold text-white hover:brightness-110 shadow-lg shadow-primary/20"
           >
             <Link href="/dashboard/categories">
               <Layers className="mr-2 h-4 w-4" />

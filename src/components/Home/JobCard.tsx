@@ -15,8 +15,8 @@ const JobCard = ({ job }: { job: Job }) => {
 
   return (
     <Link href={`/jobs/${job.id}`} className="block h-full">
-      <div className="flex h-full flex-row items-start gap-4 rounded-xl border border-zinc-200 bg-white p-5 font-epilogue transition-all hover:shadow-lg group cursor-pointer">
-        <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-zinc-100 bg-zinc-50 shadow-sm">
+      <div className="flex h-full flex-row items-start gap-4 rounded-xl border border-border/60 bg-card p-5 font-epilogue transition-all hover:shadow-xl hover:border-primary/20 group cursor-pointer">
+        <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-border/50 bg-muted/30 shadow-sm">
           <Image
             src={logoSrc}
             alt={company}
@@ -27,33 +27,33 @@ const JobCard = ({ job }: { job: Job }) => {
         </div>
 
         <div className="min-w-0 flex-1 flex flex-col gap-2">
-          <h3 className="font-clash text-lg font-bold leading-snug text-[#2D2D2D] line-clamp-2 transition-colors group-hover:text-[#4640DE] sm:text-xl sm:line-clamp-1">
+          <h3 className="font-clash text-lg font-bold leading-snug text-foreground line-clamp-2 transition-colors group-hover:text-primary sm:text-xl sm:line-clamp-1">
             {job.title}
           </h3>
 
-          <p className="flex flex-wrap items-center gap-x-1 gap-y-0.5 text-sm font-medium text-zinc-500">
+          <p className="flex flex-wrap items-center gap-x-1 gap-y-0.5 text-sm font-medium text-muted-foreground">
             <span className="truncate">{company}</span>
-            <span className="text-zinc-300" aria-hidden>
+            <span className="text-border" aria-hidden>
               •
             </span>
             <span className="inline-flex min-w-0 items-center gap-1">
-              <MapPin size={14} className="shrink-0 text-[#4640DE]" />
+              <MapPin size={14} className="shrink-0 text-primary" />
               <span className="truncate">
                 {job.location || job.district || "Location TBD"}
               </span>
             </span>
           </p>
 
-          <p className="line-clamp-2 text-sm leading-relaxed text-zinc-500">
+          <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground/80">
             {job.description || "Join the team and build something meaningful."}
           </p>
 
           <div className="mt-1 flex flex-wrap items-center gap-2">
-            <span className="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-600">
+            <span className="rounded-full border border-secondary/20 bg-secondary/10 px-3 py-1 text-xs font-semibold text-secondary">
               {formatEmploymentType(job.employmentType)}
             </span>
-            <span className="h-4 w-px shrink-0 bg-zinc-200" aria-hidden />
-            <span className="rounded-full border border-orange-100 bg-orange-50 px-3 py-1 text-xs font-semibold text-orange-600">
+            <span className="h-4 w-px shrink-0 bg-border" aria-hidden />
+            <span className="rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
               {formatJobType(job.jobType)}
             </span>
           </div>

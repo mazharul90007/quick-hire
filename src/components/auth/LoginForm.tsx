@@ -76,64 +76,58 @@ export const LoginForm = () => {
 
   return (
     <div className="rounded-2xl border border-white/60 bg-white/85 backdrop-blur-xl shadow-[0_24px_80px_-24px_oklch(0.35_0.08_260/0.35)] p-6 sm:p-8 font-epilogue relative">
-      <div className="absolute right-4 top-4 sm:right-6 sm:top-6">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="outline"
-              size="icon"
-              className="rounded-full h-9 w-9 border-border"
-              title="Demo credentials"
-            >
-              <KeyRound className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56 rounded-xl">
-            <DropdownMenuLabel className="text-xs uppercase tracking-wider text-muted-foreground">
-              Demo fill
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => {
-                setEmail("applicant@gmail.com");
-                setPassword("pass123456");
-              }}
-              className="gap-2 cursor-pointer"
-            >
-              <User className="h-4 w-4 text-primary" />
-              <span className="text-sm font-semibold">Applicant</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                setEmail("recruiter@gmail.com");
-                setPassword("pass123456");
-              }}
-              className="gap-2 cursor-pointer"
-            >
-              <Building2 className="h-4 w-4 text-sky-600" />
-              <span className="text-sm font-semibold">Recruiter</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                setEmail("admin@gmail.com");
-                setPassword("pass123456");
-              }}
-              className="gap-2 cursor-pointer"
-            >
-              <ShieldCheck className="h-4 w-4 text-emerald-600" />
-              <span className="text-sm font-semibold">Admin</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-
-      <div className="text-center mb-8 pr-10">
+      <div className="text-center mb-6">
         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight font-clash text-foreground">
           Welcome back
         </h1>
         <p className="text-muted-foreground mt-2 text-sm sm:text-base">
           Sign in to manage applications and job posts.
         </p>
+      </div>
+
+      <div className="mb-8">
+        <div className="flex items-center gap-2 mb-3">
+          <KeyRound className="h-4 w-4 text-primary" />
+          <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Quick login</span>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => {
+              setEmail("applicant@gmail.com");
+              setPassword("pass123456");
+            }}
+            className="flex flex-col h-auto py-3 gap-1.5 rounded-xl border-zinc-200 bg-white hover:bg-zinc-50 hover:border-primary/30 transition-all group"
+          >
+            <User className="h-5 w-5 text-primary" />
+            <span className="text-xs font-bold">Applicant</span>
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => {
+              setEmail("recruiter@gmail.com");
+              setPassword("pass123456");
+            }}
+            className="flex flex-col h-auto py-3 gap-1.5 rounded-xl border-zinc-200 bg-white hover:bg-zinc-50 hover:border-sky-600/30 transition-all group"
+          >
+            <Building2 className="h-5 w-5 text-sky-600" />
+            <span className="text-xs font-bold">Recruiter</span>
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => {
+              setEmail("admin@gmail.com");
+              setPassword("pass123456");
+            }}
+            className="flex flex-col h-auto py-3 gap-1.5 rounded-xl border-zinc-200 bg-white hover:bg-zinc-50 hover:border-emerald-600/30 transition-all group"
+          >
+            <ShieldCheck className="h-5 w-5 text-emerald-600" />
+            <span className="text-xs font-bold">Admin</span>
+          </Button>
+        </div>
       </div>
 
       <form className="space-y-5" onSubmit={handleLogin}>

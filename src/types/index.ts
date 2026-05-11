@@ -337,3 +337,30 @@ export interface CoursePurchaseRow {
     thumbnailUrl: string | null;
   };
 }
+
+export interface Blog {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  excerpt: string | null;
+  category: string;
+  author: string;
+  image: string | null;
+  imagePublicId: string | null;
+  readTime: string | null;
+  isPublished: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BlogFilters {
+  searchTerm?: string;
+  category?: string;
+  author?: string;
+  isPublished?: boolean | string;
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+}

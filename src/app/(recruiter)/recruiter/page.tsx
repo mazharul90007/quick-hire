@@ -218,7 +218,7 @@ export default function RecruiterOverviewPage() {
               hint="All statuses you own"
               icon={Briefcase}
               href="/recruiter/jobs"
-              accent="indigo"
+              accent="primary"
             />
             <AdminStatCard
               label="Live on board"
@@ -226,7 +226,7 @@ export default function RecruiterOverviewPage() {
               hint="Active postings"
               icon={TrendingUp}
               href="/recruiter/jobs"
-              accent="emerald"
+              accent="secondary"
             />
             <AdminStatCard
               label="Pending verification"
@@ -236,7 +236,7 @@ export default function RecruiterOverviewPage() {
               hint="Awaiting admin approval"
               icon={ShieldAlert}
               href="/recruiter/jobs"
-              accent="rose"
+              accent="primary"
             />
             <AdminStatCard
               label="Featured"
@@ -246,7 +246,7 @@ export default function RecruiterOverviewPage() {
               hint="Promoted roles"
               icon={Sparkles}
               href="/recruiter/jobs"
-              accent="amber"
+              accent="secondary"
             />
           </div>
         </div>
@@ -262,7 +262,7 @@ export default function RecruiterOverviewPage() {
               hint="Applies to your job posts"
               icon={ClipboardList}
               href="/recruiter/applications"
-              accent="slate"
+              accent="muted"
             />
           </div>
         </div>

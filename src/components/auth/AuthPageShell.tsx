@@ -16,11 +16,11 @@ export function AuthPageShell({
         aria-hidden
         style={{
           background: `
-            radial-gradient(ellipse 120% 80% at 0% -20%, oklch(0.55 0.16 195 / 0.35), transparent 55%),
-            radial-gradient(ellipse 90% 60% at 100% 0%, oklch(0.55 0.2 290 / 0.22), transparent 50%),
-            radial-gradient(ellipse 70% 50% at 50% 100%, oklch(0.7 0.08 195 / 0.12), transparent 45%),
-            oklch(0.97 0.01 240)
+            radial-gradient(ellipse 120% 80% at 0% -20%, var(--primary), transparent 55%),
+            radial-gradient(ellipse 90% 60% at 100% 0%, var(--secondary), transparent 50%),
+            oklch(0.99 0.004 240)
           `,
+          opacity: 0.1,
         }}
       />
       <div className="absolute inset-0 bg-[url('/assets/images/Pattern.svg')] opacity-[0.04] bg-center mix-blend-multiply" />

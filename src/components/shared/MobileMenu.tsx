@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { X, LogOut, LayoutDashboard, Briefcase } from "lucide-react";
+import { X, LogOut, LayoutDashboard, Briefcase, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { isApplicant, isRecruiter, isStaffAdmin } from "@/lib/roles";
@@ -44,22 +44,22 @@ const MobileMenu = ({
           isOpen ? "translate-x-0" : "translate-x-full",
         )}
       >
-        <div className="flex items-center justify-between border-b border-border px-5 py-4">
+        <div className="flex items-center justify-between border-b border-border/50 px-5 py-4">
           <Link
             href="/"
             onClick={onClose}
             className="flex items-center gap-2.5 py-0.5"
           >
-            <span className="relative block h-8 w-9 shrink-0">
+            <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 p-1 ring-1 ring-primary/20">
               <Image
                 src="/assets/images/quick-hire-images/quick_hire_logo.png"
                 alt=""
                 fill
-                className="object-contain object-left"
+                className="object-contain p-1"
                 sizes="36px"
               />
-            </span>
-            <span className="font-clash text-base font-semibold tracking-tight text-foreground">
+            </div>
+            <span className="font-clash text-base font-bold tracking-tight text-foreground">
               QuickHire
             </span>
           </Link>
@@ -67,7 +67,7 @@ const MobileMenu = ({
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="h-9 w-9 rounded-lg"
+            className="h-9 w-9 rounded-lg text-muted-foreground hover:bg-muted/50 hover:text-foreground"
             aria-label="Close menu"
           >
             <X className="size-5" />
@@ -85,10 +85,10 @@ const MobileMenu = ({
                 href={link.href}
                 onClick={onClose}
                 className={cn(
-                  "rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                  "rounded-xl px-4 py-3 text-sm font-semibold transition-all",
                   isActive
                     ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                    : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
                 )}
               >
                 {link.name}
@@ -97,16 +97,32 @@ const MobileMenu = ({
           })}
         </nav>
 
-        <div className="border-t border-border p-4">
+        <div className="border-t border-border/50 p-4">
           {session ? (
             <div className="space-y-3">
-              <div className="rounded-lg border border-border bg-muted/40 px-3 py-3">
-                <p className="truncate text-sm font-semibold text-foreground">
-                  {session.user.name}
-                </p>
-                <p className="truncate text-xs text-muted-foreground">
-                  {session.user.email}
-                </p>
+              <div className="flex items-center gap-3 rounded-xl border border-border/50 bg-muted/20 px-4 py-4">
+                {session.user.image ? (
+                  <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg">
+                    <Image
+                      src={session.user.image}
+                      alt={session.user.name ?? "User"}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary text-white shadow-sm shadow-primary/20">
+                    <User size={20} strokeWidth={2.5} />
+                  </div>
+                )}
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-bold text-foreground font-clash">
+                    {session.user.name}
+                  </p>
+                  <p className="truncate text-xs text-muted-foreground font-epilogue mt-0.5">
+                    {session.user.email}
+                  </p>
+                </div>
               </div>
 
               {isStaffAdmin(session.user.role) && (
@@ -114,10 +130,10 @@ const MobileMenu = ({
                   href="/dashboard"
                   onClick={onClose}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                    "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all",
                     pathname === "/dashboard"
                       ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                      : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
                   )}
                 >
                   <LayoutDashboard className="size-4 shrink-0" />
@@ -129,10 +145,10 @@ const MobileMenu = ({
                   href="/recruiter"
                   onClick={onClose}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                    "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all",
                     pathname.startsWith("/recruiter")
                       ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                      : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
                   )}
                 >
                   <LayoutDashboard className="size-4 shrink-0" />
@@ -144,10 +160,10 @@ const MobileMenu = ({
                   href="/applicant"
                   onClick={onClose}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                    "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all",
                     pathname.startsWith("/applicant")
                       ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                      : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
                   )}
                 >
                   <LayoutDashboard className="size-4 shrink-0" />
@@ -161,33 +177,32 @@ const MobileMenu = ({
                   onClose();
                 }}
                 variant="outline"
-                className="h-10 w-full rounded-lg border-destructive/20 font-medium text-destructive hover:bg-destructive/5 hover:text-destructive"
+                className="h-11 w-full rounded-xl border-destructive/20 font-bold text-destructive hover:bg-destructive/5 hover:text-destructive shadow-sm"
               >
                 <LogOut className="size-4" />
                 Sign out
               </Button>
             </div>
           ) : (
-            <div className="flex flex-col gap-2">
-              <Link href="/signup" onClick={onClose}>
+            <div className="flex flex-col gap-3">
+              <Link href="/signup" onClick={onClose} className="w-full">
                 <Button
                   variant="outline"
-                  className="h-10 w-full rounded-lg font-medium shadow-none"
+                  className="h-11 w-full rounded-xl border-border/50 font-bold text-primary hover:bg-primary/5 shadow-sm"
                 >
-                  <Briefcase className="size-4" />
                   Post a job
                 </Button>
               </Link>
-              <Link href="/login" onClick={onClose}>
+              <Link href="/login" onClick={onClose} className="w-full">
                 <Button
-                  variant="outline"
-                  className="h-10 w-full rounded-lg font-medium shadow-none"
+                  variant="ghost"
+                  className="h-11 w-full rounded-xl font-bold text-muted-foreground hover:text-foreground transition-all"
                 >
                   Sign in
                 </Button>
               </Link>
-              <Link href="/signup" onClick={onClose}>
-                <Button className="h-10 w-full rounded-lg font-semibold shadow-sm">
+              <Link href="/signup" onClick={onClose} className="w-full">
+                <Button className="h-11 w-full rounded-xl bg-primary hover:brightness-110 text-white font-bold shadow-lg shadow-primary/20 transition-all">
                   Create account
                 </Button>
               </Link>

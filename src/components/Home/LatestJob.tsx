@@ -12,17 +12,17 @@ const LatestJobs = () => {
 
   if (isLoading) {
     return (
-      <section className="py-20 relative overflow-hidden bg-white">
+      <section className="py-20 relative overflow-hidden bg-card">
         <div className="container mx-auto px-4 md:px-6 relative z-10">
           <div className="flex justify-between items-end mb-12">
-            <div className="h-12 w-64 bg-zinc-100 animate-pulse rounded-lg" />
-            <div className="h-6 w-32 bg-zinc-100 animate-pulse rounded-lg" />
+            <div className="h-12 w-64 bg-muted animate-pulse rounded-xl" />
+            <div className="h-6 w-32 bg-muted animate-pulse rounded-xl" />
           </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {[...Array(8)].map((_, i) => (
               <div
                 key={i}
-                className="h-32 bg-zinc-100 animate-pulse border border-zinc-100"
+                className="h-32 bg-muted/50 animate-pulse border border-border/50 rounded-xl"
               />
             ))}
           </div>
@@ -32,7 +32,7 @@ const LatestJobs = () => {
   }
 
   return (
-    <section className="py-20 relative overflow-hidden bg-[#F8F8FD]">
+    <section className="py-20 relative overflow-hidden bg-muted/10">
       {/* Background Pattern */}
       <div
         className="absolute top-0 right-0 w-full h-full opacity-40 pointer-events-none"
@@ -50,7 +50,7 @@ const LatestJobs = () => {
           <Heading first={"Latest"} second={"jobs open"} />
           <Link
             href="/jobs"
-            className="flex items-center gap-2 text-[#4640DE] font-bold font-epilogue hover:gap-3 transition-all"
+            className="flex items-center gap-2 text-primary font-bold font-epilogue hover:gap-3 transition-all"
           >
             Show all jobs
             <ArrowRight size={20} />

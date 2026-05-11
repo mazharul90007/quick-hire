@@ -26,7 +26,7 @@ const Poster = () => {
             </p>
             <Button
               asChild
-              className="bg-white text-[#4640DE] hover:bg-zinc-100 px-8 py-6 text-lg font-bold rounded-none font-epilogue border-none transition-all shadow-lg"
+              className="bg-white text-primary hover:bg-muted px-8 py-6 text-lg font-bold rounded-xl font-epilogue border-none transition-all shadow-lg hover:scale-105 active:scale-95"
             >
               <Link href="/signup">Sign Up For Free</Link>
             </Button>

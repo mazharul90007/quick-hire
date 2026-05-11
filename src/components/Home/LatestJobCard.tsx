@@ -14,8 +14,8 @@ const LatestJobCard = ({ job }: { job: Job }) => {
 
   return (
     <Link href={`/jobs/${job.id}`} className="block">
-      <div className="bg-white p-6 flex lg:flex-row lg:items-center flex-col items-start gap-6 border border-zinc-100/80 rounded-xl hover:shadow-lg transition-all group font-epilogue cursor-pointer">
-        <div className="w-16 h-16 relative shrink-0 bg-white rounded-xl p-2 border">
+      <div className="bg-card p-6 flex lg:flex-row lg:items-center flex-col items-start gap-6 border border-border/60 rounded-xl hover:shadow-xl hover:border-primary/20 transition-all group font-epilogue cursor-pointer">
+        <div className="w-16 h-16 relative shrink-0 bg-muted/30 rounded-xl p-2 border border-border/50">
           <Image
             src={logoSrc}
             alt={company}
@@ -27,22 +27,22 @@ const LatestJobCard = ({ job }: { job: Job }) => {
 
         <div className="flex flex-col gap-4 w-full">
           <div className="flex flex-col gap-2">
-            <h3 className="text-xl font-semibold font-epilogue text-[#2D2D2D] line-clamp-1 group-hover:text-[#4640DE] transition-colors">
+            <h3 className="text-xl font-semibold font-epilogue text-foreground line-clamp-1 group-hover:text-primary transition-colors">
               {job.title}
             </h3>
-            <p className="text-zinc-500 font-epilogue text-sm">
+            <p className="text-muted-foreground font-epilogue text-sm">
               {company}{" "}
-              <span className="text-zinc-300 mx-1">•</span>{" "}
+              <span className="text-border mx-1">•</span>{" "}
               {job.location || job.district || "Flexible"}
             </p>
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <span className="px-3 py-1 text-xs font-semibold font-epilogue rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">
+            <span className="px-3 py-1 text-xs font-semibold font-epilogue rounded-full bg-secondary/10 text-secondary border border-secondary/20">
               {formatEmploymentType(job.employmentType)}
             </span>
-            <span className="h-4 w-px bg-zinc-200 self-center" />
-            <span className="px-3 py-1 text-xs font-semibold font-epilogue rounded-full bg-orange-50 text-orange-600 border border-orange-100">
+            <span className="h-4 w-px bg-border self-center" />
+            <span className="px-3 py-1 text-xs font-semibold font-epilogue rounded-full bg-primary/10 text-primary border border-primary/20">
               {formatJobType(job.jobType)}
             </span>
           </div>

@@ -38,11 +38,11 @@ const HeroSection = () => {
         aria-hidden
         style={{
           background: `
-            radial-gradient(ellipse 100% 80% at 10% 20%, oklch(0.58 0.14 195 / 0.45), transparent 55%),
-            radial-gradient(ellipse 80% 60% at 90% 10%, oklch(0.55 0.22 290 / 0.28), transparent 50%),
-            radial-gradient(ellipse 60% 50% at 70% 90%, oklch(0.72 0.1 195 / 0.15), transparent 45%),
-            oklch(0.97 0.015 240)
+            radial-gradient(ellipse 100% 80% at 10% 20%, var(--primary), transparent 55%),
+            radial-gradient(ellipse 80% 60% at 90% 10%, var(--secondary), transparent 50%),
+            oklch(0.99 0.004 240)
           `,
+          opacity: 0.1,
         }}
       />
       <div className="absolute inset-0 opacity-[0.35] mix-blend-soft-light pointer-events-none">
@@ -60,18 +60,18 @@ const HeroSection = () => {
           <div className="space-y-8">
             <h1 className="font-clash text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-foreground leading-[1.05]">
               Find work that
-              <span className="block mt-1 bg-linear-to-r from-primary via-teal-600 to-fuchsia-600 bg-clip-text text-transparent">
+              <span className="block mt-1 bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
                 moves your career
               </span>
             </h1>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-lg leading-relaxed font-epilogue">
               Search curated roles, filter by industry and location, and apply
-              in one flow — powered by your QuickHire API.
+              in one flow — powered by QuickHire.
             </p>
 
             <form
               onSubmit={handleSearch}
-              className="rounded-2xl border border-white/70 bg-white/80 p-2 shadow-[0_20px_60px_-20px_oklch(0.35_0.06_260/0.4)] backdrop-blur-md flex flex-col sm:flex-row gap-2 sm:items-stretch max-w-xl"
+              className="rounded-2xl border border-border/50 bg-white/90 p-2 shadow-xl backdrop-blur-md flex flex-col sm:flex-row gap-2 sm:items-stretch max-w-xl"
             >
               <div className="flex flex-1 items-center gap-3 px-3 py-2 border-b sm:border-b-0 sm:border-r border-border/60">
                 <Search className="text-primary h-5 w-5 shrink-0" />
@@ -103,7 +103,7 @@ const HeroSection = () => {
               </div>
               <Button
                 type="submit"
-                className="h-12 sm:h-auto sm:px-8 rounded-xl font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25"
+                className="h-12 sm:h-auto sm:px-8 rounded-xl font-bold bg-primary hover:brightness-110 text-white shadow-lg shadow-primary/20"
               >
                 Search jobs
               </Button>
@@ -116,7 +116,7 @@ const HeroSection = () => {
                   key={tag}
                   type="button"
                   onClick={() => handleTagClick(tag)}
-                  className="rounded-full bg-white/50 hover:bg-white border border-border/50 px-3 py-1 text-xs font-bold text-foreground transition-colors"
+                  className="rounded-full bg-white/50 hover:bg-white border border-border/50 px-3 py-1 text-xs font-bold text-foreground transition-all hover:scale-105 active:scale-95"
                 >
                   {tag}
                 </button>
@@ -126,7 +126,7 @@ const HeroSection = () => {
 
           <div className="relative hidden lg:flex justify-center lg:justify-end">
             <div className="relative w-full max-w-md">
-              <div className="absolute -inset-4 rounded-[2rem] bg-linear-to-tr from-primary/20 via-transparent to-fuchsia-500/20 blur-2xl" />
+              <div className="absolute -inset-4 rounded-[2rem] bg-linear-to-tr from-primary/10 to-secondary/10 blur-2xl" />
               <Image
                 src="/assets/images/hero-man.png"
                 alt="Professional using QuickHire"

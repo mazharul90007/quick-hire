@@ -11,85 +11,45 @@ interface AdminStatCardProps {
   icon: LucideIcon;
   href?: string;
   trend?: string;
-  accent?:
-    | "indigo"
-    | "emerald"
-    | "amber"
-    | "violet"
-    | "rose"
-    | "sky"
-    | "cyan"
-    | "slate";
+  accent?: "primary" | "secondary" | "muted";
 }
 
-/** Soft gradient fills — readable with dark text */
+/** Professional palette - using Primary (Blue), Secondary (Emerald), and Muted (Slate) */
 const cardBackgrounds = {
-  indigo:
-    "border-indigo-200/80 bg-linear-to-br from-indigo-100/90 via-indigo-50 to-violet-100/70 shadow-sm shadow-indigo-200/30",
-  emerald:
-    "border-emerald-200/80 bg-linear-to-br from-emerald-100/90 via-emerald-50 to-teal-100/60 shadow-sm shadow-emerald-200/30",
-  amber:
-    "border-amber-200/80 bg-linear-to-br from-amber-100/90 via-amber-50 to-orange-100/50 shadow-sm shadow-amber-200/30",
-  violet:
-    "border-violet-200/80 bg-linear-to-br from-violet-100/90 via-violet-50 to-fuchsia-100/55 shadow-sm shadow-violet-200/30",
-  rose:
-    "border-rose-200/80 bg-linear-to-br from-rose-100/90 via-rose-50 to-pink-100/55 shadow-sm shadow-rose-200/30",
-  sky:
-    "border-sky-200/80 bg-linear-to-br from-sky-100/90 via-sky-50 to-blue-100/55 shadow-sm shadow-sky-200/30",
-  cyan:
-    "border-cyan-200/80 bg-linear-to-br from-cyan-100/90 via-cyan-50 to-sky-100/50 shadow-sm shadow-cyan-200/30",
-  slate:
-    "border-slate-300/70 bg-linear-to-br from-slate-100 via-slate-50 to-zinc-100/80 shadow-sm shadow-slate-200/40",
+  primary:
+    "border-primary/20 bg-linear-to-br from-primary/10 via-primary/5 to-primary/15 shadow-sm shadow-primary/5",
+  secondary:
+    "border-secondary/20 bg-linear-to-br from-secondary/10 via-secondary/5 to-secondary/15 shadow-sm shadow-secondary/5",
+  muted:
+    "border-border bg-linear-to-br from-muted/30 via-muted/10 to-muted/40 shadow-sm",
 };
 
 const labelTone = {
-  indigo: "text-indigo-900/70",
-  emerald: "text-emerald-900/70",
-  amber: "text-amber-900/75",
-  violet: "text-violet-900/70",
-  rose: "text-rose-900/70",
-  sky: "text-sky-900/75",
-  cyan: "text-cyan-900/75",
-  slate: "text-slate-700",
+  primary: "text-primary/70",
+  secondary: "text-secondary/70",
+  muted: "text-muted-foreground",
 };
 
 const hintTone = {
-  indigo: "text-indigo-950/55",
-  emerald: "text-emerald-950/55",
-  amber: "text-amber-950/60",
-  violet: "text-violet-950/55",
-  rose: "text-rose-950/55",
-  sky: "text-sky-950/55",
-  cyan: "text-cyan-950/55",
-  slate: "text-slate-600",
+  primary: "text-primary/60",
+  secondary: "text-secondary/60",
+  muted: "text-muted-foreground/70",
 };
 
 const valueTone = {
-  indigo: "text-indigo-950",
-  emerald: "text-emerald-950",
-  amber: "text-amber-950",
-  violet: "text-violet-950",
-  rose: "text-rose-950",
-  sky: "text-sky-950",
-  cyan: "text-cyan-950",
-  slate: "text-slate-900",
+  primary: "text-primary",
+  secondary: "text-secondary",
+  muted: "text-foreground",
 };
 
 /** Icon tile: light glass on top of gradient */
 const iconStyles = {
-  indigo:
-    "border-white/70 bg-white/75 text-indigo-600 shadow-md shadow-indigo-900/10 backdrop-blur-sm",
-  emerald:
-    "border-white/70 bg-white/75 text-emerald-600 shadow-md shadow-emerald-900/10 backdrop-blur-sm",
-  amber:
-    "border-white/70 bg-white/75 text-amber-700 shadow-md shadow-amber-900/10 backdrop-blur-sm",
-  violet:
-    "border-white/70 bg-white/75 text-violet-600 shadow-md shadow-violet-900/10 backdrop-blur-sm",
-  rose: "border-white/70 bg-white/75 text-rose-600 shadow-md shadow-rose-900/10 backdrop-blur-sm",
-  sky: "border-white/70 bg-white/75 text-sky-600 shadow-md shadow-sky-900/10 backdrop-blur-sm",
-  cyan: "border-white/70 bg-white/75 text-cyan-600 shadow-md shadow-cyan-900/10 backdrop-blur-sm",
-  slate:
-    "border-white/70 bg-white/75 text-slate-700 shadow-md shadow-slate-900/10 backdrop-blur-sm",
+  primary:
+    "border-primary/20 bg-white text-primary shadow-md shadow-primary/10 backdrop-blur-sm",
+  secondary:
+    "border-secondary/20 bg-white text-secondary shadow-md shadow-secondary/10 backdrop-blur-sm",
+  muted:
+    "border-border bg-white text-muted-foreground shadow-md backdrop-blur-sm",
 };
 
 export function AdminStatCard({
@@ -99,7 +59,7 @@ export function AdminStatCard({
   icon: Icon,
   href,
   trend,
-  accent = "indigo",
+  accent = "primary",
 }: AdminStatCardProps) {
   const inner = (
     <div

@@ -14,10 +14,64 @@ import {
   CourseCatalogItem,
   CourseAdminRow,
   CoursePurchaseRow,
+  Blog,
+  BlogFilters,
 } from "@/types";
 import { api } from "./axiosInstance";
 
 export type { ApiResponse };
+
+// ============== Blogs ==============
+
+export const blogApi = {
+  getAll: async (params?: BlogFilters) => {
+    const response = await api.get<ApiResponse<Blog[]>>("/blogs", { params });
+    return response.data;
+  },
+  getById: async (id: string) => {
+    const response = await api.get<ApiResponse<Blog>>(`/blogs/${id}`);
+    return response.data;
+  },
+  getBySlug: async (slug: string) => {
+    const response = await api.get<ApiResponse<Blog>>(`/blogs/slug/${slug}`);
+    return response.data;
+  },
+  create: async (payload: Partial<Blog> & { imageFile?: File }) => {
+    const formData = new FormData();
+    const { imageFile, ...data } = payload;
+    
+    formData.append("data", JSON.stringify(data));
+    
+    if (imageFile) {
+      formData.append("image", imageFile);
+    }
+    
+    const response = await api.post<ApiResponse<Blog>>(
+      "/blogs/create-blog",
+      formData,
+    );
+    return response.data;
+  },
+  update: async (id: string, payload: Partial<Blog> & { imageFile?: File }) => {
+    const formData = new FormData();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { imageFile, id: _id, createdAt, updatedAt, image, imagePublicId, ...data } = payload;
+    
+    formData.append("data", JSON.stringify(data));
+    
+    if (imageFile) {
+      formData.append("image", imageFile);
+    }
+    
+    const response = await api.patch<ApiResponse<Blog>>(`/blogs/${id}`, formData);
+    return response.data;
+  },
+  delete: async (id: string) => {
+    const response = await api.delete<ApiResponse<Blog>>(`/blogs/${id}`);
+    return response.data;
+  },
+};
+
 
 // ============== Industries (replaces categories for jobs) ==============
 

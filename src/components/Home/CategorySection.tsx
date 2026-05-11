@@ -33,21 +33,21 @@ const CategorySection = () => {
   return (
     <section className="py-16 relative overflow-hidden">
       <div
-        className="pointer-events-none absolute -top-24 right-0 h-64 w-64 rounded-full bg-[#4640DE]/10 blur-3xl"
+        className="pointer-events-none absolute -top-24 right-0 h-64 w-64 rounded-full bg-primary/10 blur-3xl"
         aria-hidden
       />
       <div className="container mx-auto px-4 md:px-6 relative">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-6 mb-12">
           <div>
             <Heading first={"Explore by"} second={"industry"} />
-            <p className="mt-3 text-[#515B6F] font-epilogue max-w-lg">
+            <p className="mt-3 text-muted-foreground font-epilogue max-w-lg">
               Pick a sector to see roles that match your background. Filters
               sync with the job board.
             </p>
           </div>
           <Link
             href="/jobs"
-            className="inline-flex items-center gap-2 text-[#4640DE] font-bold font-epilogue hover:gap-3 transition-all shrink-0"
+            className="inline-flex items-center gap-2 text-primary font-bold font-epilogue hover:gap-3 transition-all shrink-0"
           >
             Browse all jobs
             <ArrowRight size={20} />
@@ -63,18 +63,18 @@ const CategorySection = () => {
                 key={industry.id}
                 href={`/jobs?industryId=${industry.id}`}
                 className={cn(
-                  "group relative isolate overflow-hidden rounded-2xl border border-zinc-200/80",
-                  "bg-linear-to-b from-white to-zinc-50/70 p-6 shadow-sm transition-all duration-300",
-                  "hover:-translate-y-1 hover:border-[#4640DE]/35 hover:shadow-xl hover:shadow-indigo-200/30",
+                  "group relative isolate overflow-hidden rounded-2xl border border-border/60",
+                  "bg-linear-to-b from-card to-muted/10 p-6 shadow-sm transition-all duration-300",
+                  "hover:-translate-y-1 hover:border-primary/35 hover:shadow-xl hover:shadow-primary/10",
                 )}
               >
                 <div
-                  className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-[#4640DE]/8 blur-2xl transition-opacity group-hover:opacity-90"
+                  className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary/8 blur-2xl transition-opacity group-hover:opacity-90"
                   aria-hidden
                 />
                 <div className="relative z-10 flex h-full flex-col">
                   <div className="flex items-start justify-between gap-3">
-                    <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm">
+                    <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl border border-border/50 bg-card shadow-sm">
                       <img
                         src={logoSrc}
                         alt={industry.name}
@@ -84,23 +84,23 @@ const CategorySection = () => {
                         }}
                       />
                     </div>
-                    <span className="inline-flex items-center rounded-md border border-zinc-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-zinc-600">
+                    <span className="inline-flex items-center rounded-md border border-border/50 bg-card px-2.5 py-1 text-[11px] font-semibold text-muted-foreground">
                       {jobCount} {jobCount === 1 ? "job" : "jobs"}
                     </span>
                   </div>
 
                   <div className="mt-5 space-y-2">
-                    <h3 className="font-clash text-xl font-semibold tracking-tight text-[#2D2D2D] transition-colors group-hover:text-[#4640DE]">
+                    <h3 className="font-clash text-xl font-semibold tracking-tight text-foreground transition-colors group-hover:text-primary">
                       {industry.name}
                     </h3>
-                    <p className="text-sm leading-relaxed text-[#848a99] font-epilogue">
+                    <p className="text-sm leading-relaxed text-muted-foreground font-epilogue">
                       Explore open positions and specializations in this
                       industry.
                     </p>
                   </div>
 
                   <div className="mt-auto pt-5">
-                    <span className="inline-flex items-center gap-2 text-sm font-semibold text-[#4640DE]">
+                    <span className="inline-flex items-center gap-2 text-sm font-semibold text-primary">
                       View opportunities
                       <ArrowRight
                         className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1"
